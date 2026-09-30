@@ -27,7 +27,7 @@ Why weight loss: in a humid tropical climate the cooler can only take a few degr
 
 ### Option 1 (recommended): weight-loss budget control with a sentinel crate
 
-**Hardware added.** One crate, the "sentinel", sits on a weighing platform: a single-point aluminium bar load cell (20-30 kg) with an HX711 amplifier. The amplifier lives in the dry electrical bay; the load cell is coated for humidity. Cost about PHP 600-900.
+**Hardware added.** The cooler's one standard crate becomes the "sentinel" and sits on a weighing platform: a single-point aluminium bar load cell (20-30 kg) with an HX711 amplifier. The amplifier lives in the dry electrical bay; the load cell is coated for humidity. Cost about PHP 600-900.
 
 **What the software does.**
 1. **Detects batches automatically.** A step change of more than 2 kg on the sentinel starts a new batch and records the starting mass. Removing produce for sale is detected the same way and re-baselines.
@@ -44,7 +44,7 @@ Why weight loss: in a humid tropical climate the cooler can only take a few degr
 * Condensation on produce adds apparent weight. The SATURATED mode already prevents saturated air, and a step filter rejects sudden gains.
 * Handling the sentinel crate disturbs the reading. Batch detection re-baselines on any step change.
 * Load cells drift with temperature and humidity. Use temperature compensation, a coated cell, and a daily zero check when the crate is lifted.
-* The sentinel is one crate of three. The thesis must show it represents the others by weighing all crates daily by hand during trials.
+* The sentinel is the crate, which holds most of the load; the shelf produce is not weighed by the cooler. During trials, weigh the shelf produce daily by hand to show whether the crate represents it.
 
 ### Option 2: software-only weight-loss budget ("virtual sentinel")
 

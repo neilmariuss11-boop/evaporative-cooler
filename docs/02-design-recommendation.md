@@ -64,16 +64,16 @@ Why this family and not the alternatives:
 
 | Item | Value |
 |------|-------|
-| Storage | 3 crates, 25-35 kg, chamber 540 × 520 × 900 mm |
-| Pad | cellulose 7090, 500 × 400 × 150 mm, face velocity 0.21 m/s |
-| Airflow | 150 m³/h, two 120 mm 12 V PWM exhaust fans |
+| Storage | 1 standard crate plus 1 slatted shelf, 12-17 kg, chamber 540 × 520 × 590 mm |
+| Pad | cellulose 7090, 500 × 300 × 150 mm, face velocity 0.19 m/s |
+| Airflow | 100 m³/h, two 120 mm 12 V PWM exhaust fans at about 65 % speed |
 | Expected pad saturation efficiency | 90 % design value, 92-95 % likely |
-| Chamber on a 33-34 °C dry-season afternoon | about 27.3-27.6 °C, 94-95 % RH (steady load) |
+| Chamber on a 33-34 °C dry-season afternoon | about 27.3-27.7 °C, 94-95 % RH (steady load) |
 | Chamber on a wet-season afternoon | about 28.3 °C, 97 % RH |
-| Water | 12 L sump, about 6-8 L/day in the dry season |
-| Power | 12 V, about 280 Wh/day in the dry season |
-| Overall size | 820 × 892 × 1230 mm on casters |
-| Cost | about PHP 19 300 with a wall adapter |
+| Water | 10 L sump, about 4-5.5 L/day in the dry season |
+| Power | 12 V, about 200 Wh/day in the dry season |
+| Overall size | 820 × 892 × 920 mm on casters |
+| Cost | about PHP 18 800 with a wall adapter |
 
 ### 2.2 How to present it
 
