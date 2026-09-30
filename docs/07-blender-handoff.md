@@ -118,7 +118,7 @@ Resolution 2400 × 1600 PNG, neutral grey studio background, soft three-point li
 
 ## 10. Acceptance checklist
 
-* [ ] Overall bounding box of the whole model is X 0..820, Y -12..880, Z 0..920 (door handle may add a few mm in -Y).
+* [ ] Overall bounding box of the whole model is X 0..820, Y -12..880, Z 0..920, except the door handle and latches, which stand out to about Y -47.
 * [ ] Chamber clear interior is 540 × 520 × 590 mm.
 * [ ] Every object name matches the spec, and every spec part exists.
 * [ ] No part intersects another, except the intended ones: the pad inside its cassette frame, the cap riveted over the frame top, the pump and water inside the sump, the HDPE hardpoint replacing floor insulation, and cut openings.
