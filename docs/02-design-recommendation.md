@@ -71,9 +71,9 @@ Why this family and not the alternatives:
 | Chamber on a 33-34 °C dry-season afternoon | about 27.3-27.7 °C, 94-95 % RH (steady load) |
 | Chamber on a wet-season afternoon | about 28.3 °C, 97 % RH |
 | Water | 10 L sump, about 4-5.5 L/day in the dry season |
-| Power | 12 V, about 200 Wh/day in the dry season |
+| Power | 15 V wall adapter plus 12 V 12 Ah backup battery; about 200 Wh/day in the dry season, 8-12 h on battery |
 | Overall size | 820 × 892 × 920 mm on casters |
-| Cost | about PHP 18 800 with a wall adapter |
+| Cost | about PHP 20 800 including the backup battery |
 
 ### 2.2 How to present it
 

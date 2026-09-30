@@ -76,33 +76,52 @@ Halving the capacity leaves the achievable temperatures unchanged: the steady ch
 | ESP32, display, sensors, SD | 1.5 | 100 % | 1.5 / 1.5 |
 | **Total** | **17.5** | | **8.5 / 3.5** |
 
-Daily energy: about 200 Wh in DRY mode, about 85 Wh in HUMID mode. Peak current is 1.5 A, inside the 3 A fuse and adapter rating.
+Daily energy: about 200 Wh in DRY mode, about 85 Wh in HUMID mode. Peak load current is 1.5 A; with battery charging on top, the adapter supplies up to 2.7 A, inside its 3 A rating.
 
-### 4.2 Options for open decision O1 (power source)
+### 4.2 Power supply: wall adapter with battery backup
 
-| Option | Hardware | Notes |
-|--------|----------|-------|
-| (a) Wall adapter | 12 V 3 A regulated adapter into `BAY_jack_dc` | Simplest; lab and market-stall use |
-| (b) Adapter + battery | 12 V 12 Ah SLA in `BAY_battery`, charged by a 12 V 2 A charger | About 8 h in DRY mode or 20 h in HUMID mode without mains, enough to ride out brownouts |
-| (c) Battery + solar | 80 W panel (about 780 × 540 mm) on a separate stand, 10 A PWM charge controller in `BAY_charge_controller`, 12 Ah battery | Sized for 200 Wh/day at 4.5 peak-sun hours and 70 % system efficiency. The panel is wider than the cabinet roof, so it stands apart |
+Decided by the owner: mains adapter plus a backup battery. When mains is present the adapter runs the cooler and keeps the battery charged. During a brownout the battery takes over with no interruption.
+
+| Part | Spec | Role |
+|------|------|------|
+| Wall adapter | 15 V DC, 3 A, regulated, 5.5 × 2.1 mm plug | Supplies the loads (1.5 A peak) and charges the battery (up to 1.2 A) at the same time. Stays outside the unit |
+| DC-UPS / SLA charge module | 12 V lead-acid type; input 15-18 V; float 13.6-13.8 V; charge current limited to about 1.2 A (0.1 C); automatic switchover; low-voltage cut-off at about 10.8 V | Charges the battery, feeds the 12 V bus from the adapter or the battery, and disconnects the load before the battery is damaged |
+| Battery | 12 V 12 Ah sealed lead-acid (SLA), 151 × 98 × 95 mm | About 72 Wh usable at 50 % depth of discharge |
+| Battery fuse | 5 A blade fuse in an inline holder on the battery positive lead | Protects the battery wiring |
+
+Bus voltage is 13.6-13.8 V on mains and 12.8 V falling to about 11 V on battery. Choose fans and pump rated for up to 13.8 V; most 12 V PC fans and brushless DC pumps are.
+
+**Runtime on battery.**
+
+| Mode | Average load | Runtime |
+|------|-------------:|--------:|
+| DRY | 8.5 W | about 8.5 h |
+| DRY with battery saving (below) | 6 W | about 12 h |
+| HUMID | 3.5 W | about 20 h |
+
+**Battery saving.** When the controller sees it is running on battery and the voltage falls below 12.2 V, it caps the fans at 50 % and stretches the pump off-time by a third. Below 11.6 V it shows "LOW BATTERY" and flashes the LED. The module's own cut-off at about 10.8 V is the last line of protection.
+
+A solar panel can be added later without redesign: a PV charge controller would feed the same battery. It is not part of this design.
 
 ### 4.3 Wiring
 
 ```
- DC jack ── FUSE 3 A ── MAIN SW ──┬──────────────── +12 V bus ─────────────────────────────┐
-                                  │                                                       │
-                     MODE SWITCH (3-position, 3-pole)                              BUCK 12→5 V ── ESP32 5V
-                      AUTO: fans ← MOSFET_fans, pump ← MOSFET_pump                        │
-                      OFF:  fans and pump unpowered                                       ├── SHT31 ambient  (I2C 0x44, bus 1)
-                      MANUAL: fans ← +12 V direct (PWM open → full speed),                ├── SHT31 chamber  (I2C 0x45, bus 1)
-                              pump ← +12 V direct                                         ├── SHT31 pad outlet (I2C 0x44, bus 2)
-                                                                                          ├── DS18B20 pulp probe (1-Wire GPIO4, 4.7 kΩ)
- FAN1/2 PWM  ◄── GPIO25 (25 kHz)      MOSFET_fans gate ◄── GPIO32                          ├── Float switch ─► GPIO34 (pull-up)
- FAN1/2 TACH ──► GPIO26 / GPIO27      MOSFET_pump gate ◄── GPIO33                          ├── Mode sense ─► GPIO35 (AUTO = low)
-                                                                                          ├── TFT 2.8" SPI (GPIO18/19/23/5, DC 16, RST 17)
-                                                                                          ├── microSD SPI (CS 15)
-                                                                                          ├── Buttons GPIO12/13/14 (pull-up)
- GND ──────────────────────────────────────────────────────────────────────────────────── └── Status LED GPIO2
+ 15 V adapter ── DC jack ── DC-UPS module IN
+                            DC-UPS module BAT ── 5 A fuse ── 12 V 12 Ah SLA
+                            DC-UPS module OUT ── FUSE 3 A ── MAIN SW ──┬──── +12 V bus (13.8 V on mains) ─────────┐
+                                                                       │                                         │
+                     MODE SWITCH (3-position, 3-pole)                                                     BUCK 12→5 V ── ESP32 5V
+                      AUTO: fans ← MOSFET_fans, pump ← MOSFET_pump                                               │
+                      OFF:  fans and pump unpowered                                                              ├── SHT31 ambient  (I2C 0x44, bus 1)
+                      MANUAL: fans ← +12 V direct (PWM open → full speed),                                       ├── SHT31 chamber  (I2C 0x45, bus 1)
+                              pump ← +12 V direct                                                                ├── SHT31 pad outlet (I2C 0x44, bus 2)
+                                                                                                                 ├── DS18B20 pulp probe (1-Wire GPIO4, 4.7 kΩ)
+ FAN1/2 PWM  ◄── GPIO25 (25 kHz)      MOSFET_fans gate ◄── GPIO32                                                 ├── Float switch ─► GPIO34 (pull-up)
+ FAN1/2 TACH ──► GPIO26 / GPIO27      MOSFET_pump gate ◄── GPIO33                                                 ├── Mode sense ─► GPIO35 (AUTO = low)
+ Bus voltage ── 100 kΩ / 22 kΩ divider ──► GPIO36                                                                  ├── TFT 2.8" SPI (GPIO18/19/23/5, DC 16, RST 17)
+ Adapter present ── 100 kΩ / 22 kΩ divider (from DC jack) ──► GPIO39                                               ├── microSD SPI (CS 15)
+                                                                                                                 ├── Buttons GPIO12/13/14 (pull-up)
+ GND ─────────────────────────────────────────────────────────────────────────────────────────────────────────── └── Status LED GPIO2
 ```
 
 The controller stays powered in every mode position so it keeps logging and displaying. In MANUAL it reads the mode-sense pin, shows "MANUAL", and does not drive the MOSFETs. The float-switch pump cut-out works only in AUTO; the display still shows "FILL" in MANUAL.
@@ -120,6 +139,7 @@ All cables outside the bay run in 16 mm PVC conduit. Entries into the chamber an
 * `eta_pad = (T_amb - T_pad) / WBD`: pad saturation efficiency, shown on the display and logged. This is the headline performance number.
 * `eta_ch = (T_amb - T_ch) / WBD`: chamber cooling efficiency.
 * `water_ok` from the float switch (debounced 5 s).
+* `V_bus` from the bus-voltage divider and `mains` from the adapter-present divider, every 10 s.
 
 ### 5.2 Modes (AUTO position)
 
@@ -131,6 +151,8 @@ All cables outside the bay run in 16 mm PVC conduit. Entries into the chamber an
 | DRY-OUT | once a day at the set time, 45 min | 50 % | off | Algae control for the cellulose pad |
 | FILL | water_ok = false | unchanged | off | Protect the pump; display and LED alarm |
 | PULLDOWN | T_pulp > T_ch + 3 K, for example after loading | 100 % | as DRY | Fast removal of field heat |
+
+Battery overlay, applied on top of any mode: if `mains` is false and `V_bus` < 12.2 V, fans are capped at 50 % and pump off-times are stretched by a third; below 11.6 V the display shows "LOW BATTERY" and the LED flashes.
 
 Thresholds are menu-adjustable. Running fans with the pump off (SATURATED and DRY-OUT) is standard pad-cooler practice; see the patent note in `03-design-decisions.md`.
 
@@ -148,15 +170,17 @@ every 10 s:
     elif WBD >= 3.0:                               mode = DRY
     elif WBD < 2.5:                                mode = HUMID
     # otherwise keep the previous mode (hysteresis band)
+    if not mains and V_bus < 12.2: apply battery saving
     set fan_pwm(mode); schedule pump duty(mode)
 every 60 s:
     append CSV row: timestamp, T_amb, RH_amb, T_wb, WBD, T_pad, eta_pad, T_ch, RH_ch, eta_ch,
-                    T_pulp, mode, switch_pos, fan_pwm, pump_state, water_ok, fan1_rpm, fan2_rpm
+                    T_pulp, mode, switch_pos, fan_pwm, pump_state, water_ok, fan1_rpm, fan2_rpm,
+                    mains, V_bus
 display refresh every 2 s:
     AMB 33.1C 62%   WB 26.8
     CHM 27.6C 95%   dT 5.5
     PAD eff 91%     MODE DRY
-    WATER OK        PUMP ON   up 14:32
+    WATER OK        PUMP ON   MAINS / BATT 78%
 ```
 
 Logging is to microSD in daily CSV files. No wireless in this version.
@@ -239,19 +263,19 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 32 | MOSFET modules, buck converter, terminal block, fuse holder, main switch, jack, buttons, LED |  | lot | 500 |
 | 33 | 3-position AUTO / OFF / MANUAL rocker, 10 A |  | 1 | 150 |
 | 34 | 16 mm PVC conduit, M16 glands, cable |  | lot | 350 |
-| 35 | 12 V 3 A adapter |  | 1 | 350 |
-| 36 | White exterior paint, varnish, silicone, screws, PVC cement |  | lot | 800 |
-| | **Subtotal, option (a) wall adapter** | | | **~18 800** |
-| 37 | 12 V 12 Ah SLA battery and 2 A charger (option b) | | 1 | 2,000 |
-| | **Total, option (b)** | | | **~20 800** |
-| 38 | 80 W PV panel, stand, 10 A PWM controller, cable (option c, in addition to b) | | 1 | 5,500 |
-| | **Total, option (c)** | | | **~26 300** |
+| 35 | 15 V 3 A adapter |  | 1 | 400 |
+| 36 | 12 V 12 Ah SLA battery | 151 × 98 × 95 | 1 | 1,300 |
+| 37 | 12 V DC-UPS / SLA charge module with low-voltage cut-off | 15-18 V in, ~1.2 A charge | 1 | 600 |
+| 38 | Inline 5 A blade fuse holder, battery leads and terminals | | 1 | 100 |
+| 39 | White exterior paint, varnish, silicone, screws, PVC cement |  | lot | 800 |
+| | **Total** | | | **~20 800** |
 
 Prices are 2026 Metro Manila hardware, poultry-supply and electronics-shop estimates; expect ±30 %. Cellulose 7090 pad is sold by poultry-house and greenhouse suppliers and online in standard sheets, commonly 600 mm wide in 1200-1800 mm lengths; one sheet makes several replacement cassettes.
 
 ## 8. Safety and hygiene
 
-* 12 V system fused at 3 A; no mains inside the unit. The adapter stays outside.
+* 12 V system fused at 3 A on the bus and 5 A on the battery lead; no mains inside the unit. The adapter stays outside.
+* The sealed lead-acid battery is maintenance-free and safe indoors, but keep the bay vents clear and replace the battery every 3-4 years or when runtime halves.
 * Water and electronics are separated: the bay is on the dry right side, the wet module is at the back, and the only shared items are glanded cables.
 * The sump water is dosed with bleach and is not potable; the fill label says so.
 * Fans are guarded and the hood slots are screened.

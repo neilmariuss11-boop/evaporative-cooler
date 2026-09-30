@@ -28,4 +28,6 @@ Insulated plywood and EPS cabinet with a 540 × 520 × 590 mm chamber (0.166 m³
 
 Priority: application and cooling efficiency, not novelty. Expected pad saturation efficiency is about 90 %, which puts the chamber within about 1 K of the outside wet-bulb temperature, the physical limit for any evaporative cooler.
 
-Open decisions (see `docs/03-design-decisions.md` section 4): power source (adapter, battery, or solar) and test crop.
+Power: 15 V wall adapter with a 12 V 12 Ah backup battery that takes over during brownouts.
+
+Open decisions (see `docs/03-design-decisions.md` section 4): test crop. Novelty option pending (see `docs/06-software-novelty-options.md`).

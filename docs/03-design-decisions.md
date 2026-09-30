@@ -2,7 +2,7 @@
 
 Decision log for the student-scale evaporative cooling cabinet. Each entry states the decision, why it was taken (research result, efficiency, practicality or patent avoidance), and what it rules out. Read this before `04-assembly-spec.md`; that file only gives geometry.
 
-Status: decided with the project owner on 30 Sep 2026, revised twice the same day (cellulose pad; then half capacity). Two items remain open (section 4).
+Status: decided with the project owner on 30 Sep 2026, revised twice the same day (cellulose pad; then half capacity). One item remains open (section 4).
 
 ## 1. Project priority
 
@@ -26,6 +26,7 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 | D10 | Efficiency definition | Get as close to the wet-bulb limit as possible, single stage | A two-stage unit would add 1.5-2 K on dry afternoons but doubles parts and cost and sits near the dew-point cooler patents. Not worth it for a practical unit. |
 | D11 | Testing scope | Test only the final design: commissioning, no-load performance in both seasons, storage trial | No pad-material comparison. |
 | D12 | Electronics fallback | Keep the controller, add a 3-position AUTO / OFF / MANUAL switch | If the electronics fail, MANUAL runs the fans at full speed and the pump continuously, so the cooler keeps working. Essential for a unit meant for real use. |
+| D13 | Power | 15 V wall adapter plus a 12 V 12 Ah sealed lead-acid battery through a DC-UPS charge module | Mains runs the cooler and charges the battery; brownouts switch to the battery without interruption, for about 8-12 h of cooling or 20 h in humid weather. No solar. |
 
 ## 3. Decisions taken by the designer (owner may override)
 
@@ -41,7 +42,7 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 | E8 | Daily dry-out | 45 min with pump off and fans at 60 %, default 06:00 | Standard practice for cellulose pads to stop algae; scheduled when the cooling need is lowest. |
 | E9 | Cassette through a roof hatch | Cassette lifts straight up through a gasketed hatch | Pad cleaning and replacement take minutes and do not disturb the chamber or door. |
 | E10 | Electrical bay on the right side wall | 150 × 250 × 350 mm plywood box, display on its front face | Electronics stay dry and away from the wet module; display is beside the door where the operator stands. |
-| E11 | Modular 12 V power | 12 V bus with barrel-jack input, fuse, main switch and mode switch; space reserved for a battery and a solar charge controller | Power source is still open (O1); the bay accepts all three options without redesign. |
+| E11 | Power layout | 12 V bus behind a DC-UPS module, 3 A bus fuse, main switch and mode switch; battery in the bay | Implements D13. |
 | E12 | Rails and shelf | 40 × 40 × 3 mm aluminium angle at two levels: the crate on the lower pair, a slatted polypropylene shelf with front and back lips on the upper pair | Fits common 480-500 mm vented crates. Slats run front to back so the air sweeps along them. |
 | E13 | White exterior | White paint, varnished edges | Cuts solar heat gain when the unit is used outdoors. |
 | E14 | Three sensors | Ambient in the inlet air, pad outlet at the pad opening, chamber at mid-height between crate levels 1 and 2 | Pad efficiency needs inlet and pad-outlet readings. Chamber efficiency needs a reading in the produce zone, so the reported temperature drop is honest. |
@@ -51,7 +52,6 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 
 | # | Item | Options | Effect on the model | Default used until decided |
 |---|------|---------|---------------------|----------------------------|
-| O1 | Power source | (a) 12 V 3 A wall adapter; (b) adapter plus 12 V 12 Ah battery; (c) battery plus an 80 W solar panel on a separate stand | (a) and (b) change nothing outside the bay. (c) adds a free-standing panel of about 780 × 540 mm; it is wider than the cabinet roof. | (b): battery and charge-controller footprints are modelled in the bay; no panel. |
 | O2 | Test crop | Tomato in the crate plus a leafy crop on the shelf; tomato only; other | Only the crate and shelf contents in renders and the storage protocol in `05-systems-and-protocol.md`. | Crate and shelf modelled empty or with generic produce. |
 
 ## 5. Positioning: what the unit is, and what it is not

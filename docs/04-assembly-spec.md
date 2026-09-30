@@ -197,14 +197,15 @@ Plywood box (9 mm) screwed to the right wall exterior. Display and buttons on th
 | `BAY_mosfet_fans` | same (fan enable); PWM goes direct from the ESP32 | | on plate, centre (Y 140, Z 750) |
 | `BAY_sd_module` | microSD module 40 × 24 × 10 | | on plate, centre (Y 200, Z 790) |
 | `BAY_terminal_block` | 12-way barrier terminal 12 × 80 × 15 | | on plate, centre (Y 140, Z 715) |
-| `BAY_battery` | reserved: 12 V 12 Ah SLA, 151 × 98 × 95 (open decision O1) | | X 700..798, Y 40..191, Z 519..614 |
-| `BAY_charge_controller` | reserved: 10 A PWM solar charge controller 130 × 70 × 30, mounted on the inside of `BAY_lid` (open decision O1) | | X 780..810, Y 60..190, Z 620..690 |
+| `BAY_battery` | 12 V 12 Ah sealed lead-acid battery, 151 × 98 × 95, held by a strap to `BAY_bottom` | | X 700..798, Y 40..191, Z 519..614 |
+| `BAY_dcups_module` | 12 V DC-UPS / battery charge module, about 110 × 60 × 25, on standoffs on the inside of `BAY_lid` | | X 786..811, Y 70..180, Z 625..685 |
+| `BAY_fuse_battery` | inline 5 A blade fuse holder on the battery positive lead | 40 × 15 × 12 | X 720..760, Y 195..210, Z 620..632 |
 | `BAY_gland_top_1` | cable entry from `FAN_conduit` | | in `BAY_top` at (700, 200) |
 | `BAY_gland_top_2` | cable entry from `BAY_conduit_side` (pump, float switch, ambient sensor) | | in `BAY_top` at (700, 120) |
 | `BAY_back_hole_1`, `_2` | 20 mm holes in `BAY_back` aligned with the two chamber glands, so sensor cables pass straight from the chamber into the bay | | (Y 120, Z 530) and (Y 200, Z 560) |
 | `BAY_conduit_side` | 16 mm PVC conduit on the right wall exterior from the bay top to the rear module gland | | spline: (700, 120, 865) → (700, 250, 865) → (680, 640, 780) → (680, 830, 780) |
 
-Note: `BAY_battery` is a smaller 12 Ah unit because the halved cooler draws less power; see `05-systems-and-protocol.md`.
+Power: a 15 V wall adapter plugs into `BAY_jack_dc`; the DC-UPS module runs the cooler from it and keeps `BAY_battery` charged, switching to the battery during brownouts. See `05-systems-and-protocol.md` section 4.2.
 
 ### Group H: sensors inside the chamber (collection `H_sensors`)
 
@@ -222,7 +223,7 @@ Note: `BAY_battery` is a smaller 12 Ah unit because the halved cooler draws less
 | `LABEL_title` | project label plate on the door | see `DOOR_label` |
 | `LABEL_inlet` | "AIR INLET - KEEP CLEAR 300 mm" above the rear louver | X 200..470, Y 860, Z 700..730 |
 | `LABEL_fill` | "WATER FILL 10 L - NOT POTABLE" above the fill port | X 400..540, Y 860, Z 305..318 |
-| `LABEL_bay` | "12 V DC 3 A" beside the DC jack | X 680..720, Y 0, Z 605..615 |
+| `LABEL_bay` | "15 V DC 3 A IN" beside the DC jack | X 680..720, Y 0, Z 605..615 |
 | `LABEL_mode` | "AUTO / OFF / MANUAL" under the mode switch | X 695..735, Y 0, Z 665..675 |
 
 ## 4. Section views (for orientation)
@@ -296,7 +297,7 @@ Suggested animations or exploded views: door swing (C_door), cassette lift (D2_c
 * `PAD_fill_port` (Z 274..306) and `PAD_overflow` (Z 272..292) both sit inside the sump wall height (up to Z 312) and inside `PAD_rear_lower` (Z 140..320).
 * Fan holes (centres Y 205) lie over the front plenum and the front of the shelf zone; air must cross the crate and shelf to reach them.
 * `SENS_chamber` (Y 100..140) sits in the front plenum, forward of the rails (which start at Y 155) and of the crate and shelf, so it clears both. Its gland (Y 120, Z 530) and the pulp-probe gland (Y 200, Z 560) exit inside the bay footprint (Y 0..250, Z 510..860).
-* `BAY_battery` (Z 519..614) sits below `BAY_pcb_plate` (Z 700..820); `BAY_charge_controller` on the lid (X 780..810) clears the battery (X 700..798) because the lid-mounted controller sits above it (Z 620..690).
+* `BAY_battery` (Z 519..614) sits below `BAY_pcb_plate` (Z 700..820). `BAY_dcups_module` on the lid (X 786..811, Z 625..685) sits above the battery's top (Z 614), so the lid closes without touching it. `BAY_fuse_battery` (Z 620..632) sits beside the battery top at Y 195..210, behind the battery (Y 40..191).
 * `HOOD` (X 110..560, Y 120..290) does not overlap the hatch lid (Y 640..830) or the bay (X 670+).
 * Front-panel parts on `BAY_front` sit in rows at Z 800, 740, 690 and 630, at least 50 mm apart vertically and 30 mm apart horizontally.
 * Caster swing radius 60 mm at each corner: no part below Z 100 within that radius.
