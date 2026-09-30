@@ -23,10 +23,8 @@ python3 tools/psychro_design.py 33 62 --eff 0.75 --flow 100 --load 50 --face-vel
 
 ## Design at a glance
 
-Insulated plywood/EPS cabinet, chamber 540 × 520 × 900 mm (0.25 m³), three vented crates on aluminium rails, front plug door, 500 × 400 × 75 mm coconut-coir pad in a slide-out cassette on the back wall, two 120 mm PWM exhaust fans in the roof under a rain hood, 8 L sump with a submersible pump and drip pipe, ESP32 controller with external display that switches between DRY and HUMID modes on measured wet-bulb depression. Overall 820 × 797 × 1230 mm on four casters.
+Insulated plywood and EPS cabinet with a 540 × 520 × 900 mm chamber (0.25 m³) holding three vented crates on aluminium rails behind a front plug door. A 500 × 400 × 150 mm cellulose honeycomb pad (type 7090) sits in a lift-out cassette on the back wall, with its own water distributor, over a 12 L sump and pump. Two 120 mm PWM exhaust fans in the roof pull 150 m³/h through the pad and across the crates. An ESP32 controller with an external display switches between DRY and HUMID modes on measured wet-bulb depression and logs everything; an AUTO / OFF / MANUAL switch keeps the cooler running if the electronics fail. Overall 820 × 892 × 1230 mm on four casters.
 
-Open decisions (see `docs/03-design-decisions.md` section 3): power source (adapter, battery, or solar) and test crop.
+Priority: application and cooling efficiency, not novelty. Expected pad saturation efficiency is about 90 %, which puts the chamber within about 1 K of the outside wet-bulb temperature, the physical limit for any evaporative cooler.
 
-## Recommendation in one paragraph
-
-Build a fan-assisted, single-stage direct evaporative cooling cabinet of about 0.2-0.25 m³ (25-35 kg of produce), 12 V DC, with a 60-100 mm coconut-coir pad (charcoal and jute as comparison treatments), two 120 mm exhaust fans, a small submersible pump with a drip pipe, 25-50 mm foam insulation, and an optional microcontroller that cycles the pump and fan on measured wet-bulb depression. In the Philippine dry season it delivers about 4-5 K below ambient and 88-95 % RH; in the wet season it acts mainly as a humidity chamber, which still cuts produce water loss. Avoid fabric-walled collapsible designs (Evaptainers patent), dew-point indirect stages (Coolerado family) and sump-air pre-cooling loops; everything else in this design is expired or never-patented prior art.
+Open decisions (see `docs/03-design-decisions.md` section 4): power source (adapter, battery, or solar) and test crop.

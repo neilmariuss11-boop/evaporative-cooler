@@ -42,6 +42,8 @@ Listed from most to least relevant to a small produce cooler. "Term" is the nomi
 | 11 | JP H06-14702 A | Method for cooling produce in a cold, humid state | Process claim, 1994. | expired | Prior art only. |
 | 12 | CN 203810830 U, CN 2342600 Y, CN 2855946 Y | Chinese automatic cold store / wet-curtain preserving equipment | Wet curtain plus mechanical refrigeration. | expired | Prior art only. |
 | 13 | Wakati (Arne Pauwels, Belgium) | Solar-ventilated humidity tent, 3 W PV fan, ~150 kg | Commercial product; no patent number located in this search. | unknown | **Verify on Espacenet by applicant name "Pauwels" and "Wakati".** Do not copy the tent-plus-ultrasonic/evaporative humidifier layout without checking. |
+| 14 | US 2022/0026095 A1 | "Evaporative cooler wet and dry mode control" | Controller switching an evaporative cooler between wet and dry operation; appears to involve a cooling coil downstream of the pad. | pending or granted (verify) | **Medium for the controller.** Our unit has no cooling coil, and fans-on/pump-off operation is standard practice, but read the independent claims. |
+| 15 | US 10,145,572 B2; US 10,969,126 B2 | "Direct evaporative cooling system with precise temperature control" | Control of a direct evaporative cooler to hold a set temperature. | to ~2036 (verify) | Medium for the controller. Our controller does not regulate to a temperature set point; it selects modes from wet-bulb depression. Check the claims. |
 
 ### Features to avoid, in one list
 
@@ -52,6 +54,7 @@ Listed from most to least relevant to a small produce cooler. "Term" is the nomi
 * Novel pad-wetting distributors beyond a drip pipe, trough or spray bar (US 9,310,134).
 * Sealed humid chamber combined with sterilisation and IoT control marketed as a "preservator" (Sabjikothi, for novelty only).
 * Any compressor or Peltier stage combined with a wet-film humidifier (CN 116772497 A, for novelty only).
+* Set-point temperature regulation of a direct evaporative cooler, or wet/dry mode switching combined with a downstream cooling coil (US 10,145,572, US 10,969,126, US 2022/0026095; verify claims).
 
 ## Philippine prior art (matters for novelty, and possibly for IPOPHL utility models)
 
@@ -80,7 +83,7 @@ cpc=F24F6/04 AND ta=(fruit* OR vegetable*)                      # evaporative hu
 cpc=B65D81/18 AND ta=(evaporat*)                                # containers with cooling means
 
 # 3. Named risks to check legal status
-pn=US10907878 OR pn=US2019219321 OR pn=CN211430869U OR pn=US11604000 OR pn=US9310134 OR pn=US10830463 OR pn=US10113758 OR pn=WO2015199676
+pn=US10907878 OR pn=US2019219321 OR pn=CN211430869U OR pn=US11604000 OR pn=US9310134 OR pn=US10830463 OR pn=US10113758 OR pn=WO2015199676 OR pn=US2022026095 OR pn=US10145572 OR pn=US10969126
 pa=Evaptainers OR pa=Saptkrishi OR pa=Wakati OR pa=Pauwels
 
 # 4. Philippine filings only

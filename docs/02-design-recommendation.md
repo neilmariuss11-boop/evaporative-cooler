@@ -48,83 +48,38 @@ Face velocity matters more than the material: below about 1 m/s most fibrous pad
 
 ## 2. Recommended design
 
-**A fan-assisted, single-stage direct evaporative cooling cabinet, 12 V DC, with a locally sourced natural-fibre pad, insulated rigid chamber, and a simple duty-cycle controller.**
+**A fan-assisted, single-stage direct evaporative cooling cabinet, 12 V DC, with a 150 mm cellulose honeycomb pad, insulated rigid chamber, and a controller with a manual fallback.** The detailed design is in `03-design-decisions.md` (why), `04-assembly-spec.md` (geometry) and `05-systems-and-protocol.md` (systems, tests, bill of materials). This section only summarises it.
 
-Why this and not the alternatives:
+The first draft of this file recommended coconut coir and a research-oriented pad comparison. The project owner has since set the priority as application and cooling efficiency rather than novelty, so the pad changed to cellulose and the comparison was dropped.
 
-* Pot-in-pot: not enough engineering content for an ABE thesis and near-useless in humid air.
-* Brick ZECC: proven but too large and static for "student scale", and there is little left to investigate.
-* Two-stage: better numbers on paper but doubles the parts count and brings you close to the Coolerado/M-cycle patent family. Keep it as a stretch goal only if the direct unit is finished early.
-* Fabric-walled portable: directly on top of the Evaptainers patent. Avoid.
+Why this family and not the alternatives:
 
-### 2.1 Target specification
+* Pot-in-pot: near-useless in humid air and too small for meaningful trials.
+* Brick ZECC: proven but large, heavy and static.
+* Two-stage (indirect plus direct): 1.5-2 K colder on dry afternoons, but double the parts and close to the dew-point cooler patent family.
+* Fabric-walled portable: directly on top of the Evaptainers patent.
+* Natural-fibre pads (coir, jute, charcoal): cheap, but 50-70 % efficient for coir and jute, and they need replacing within weeks.
 
-| Item | Value | Basis |
-|------|-------|-------|
-| Storage volume | 0.20-0.25 m³ (inside about 0.55 × 0.55 × 0.75 m) | 25-35 kg tomato in 2-3 plastic crates; fits a lab bench and a tricycle |
-| Test crop | Tomato (breaker stage), plus one leafy crop (pechay) for the humidity case | Standard in the ZECC and PhilMech literature, easy to score |
-| Design airflow | 90-120 m³/h once-through (not recirculated) | Enough to hold the chamber within ~1.5 K of pad-outlet air at a 60 W load (calc) |
-| Fans | 2 × 120 mm 12 V DC axial (nominal 100-150 m³/h each, ~2-3 W) mounted as exhaust, pulling air through the pad | Pull-through keeps the fan dry and gives even face velocity |
-| Pad | 60-100 mm thick, face area ≥ 0.05 m² (e.g. 0.30 × 0.20 m), in a removable galvanised-mesh frame | Face velocity 0.5-0.7 m/s (calc); thicker pad raises efficiency but also pressure drop, which small axial fans handle poorly beyond 100 mm |
-| Pad media | Coconut coir as the primary treatment; charcoal and jute as comparison treatments | See section 1.3 |
-| Water system | 12 V submersible pump 2-4 W, 200-300 L/h, PVC drip pipe with 2 mm holes at 25 mm pitch over the pad, gravity return to a 10-15 L sump | Drip pipe and sump are century-old prior art |
-| Water use | 3-8 L/day continuous in the dry season (calc); refill every 2 days | |
-| Chamber walls | 12 mm marine plywood or 0.5 mm GI sheet outside, 25-50 mm EPS or PU foam, food-safe plastic sheet inside; sloped drip floor | Keeps wall heat gain under 20-30 W |
-| Air path | Inlet through the pad on one side, fans on the opposite top, slatted crate shelves so air passes through the produce, small outlet louvre | Avoid dead zones |
-| Power | 12 V, total 8-12 W; run from a 20-30 W PV panel with a 12 V 7-12 Ah battery, or a bench supply in the lab | Off-grid demonstration; also lets you test the "solar-powered" case that Nigerian and Ethiopian studies report |
-| Control (optional, recommended) | Arduino/ESP32 with 2 DHT22 or SHT31 sensors (ambient and chamber), a float switch, and a MOSFET for the pump. Pump runs 30 s every 5 min; fan runs continuously in the dry season and at reduced duty when ambient RH > 85 % | Cheap, gives you data logging for free, and is the main "novelty" lever in a humid climate |
-| Instrumentation | Ambient and chamber T/RH loggers, produce pulp temperature probe, water meter or graduated sump, kitchen balance for weight loss, colour chart and firmness scoring | Standard ABE test protocol |
+### 2.1 Key numbers
 
-### 2.2 Performance you can expect (calc, 80 % pad efficiency, 120 m³/h, 60 W load)
+| Item | Value |
+|------|-------|
+| Storage | 3 crates, 25-35 kg, chamber 540 × 520 × 900 mm |
+| Pad | cellulose 7090, 500 × 400 × 150 mm, face velocity 0.21 m/s |
+| Airflow | 150 m³/h, two 120 mm 12 V PWM exhaust fans |
+| Expected pad saturation efficiency | 90 % design value, 92-95 % likely |
+| Chamber on a 33-34 °C dry-season afternoon | about 27.3-27.6 °C, 94-95 % RH (steady load) |
+| Chamber on a wet-season afternoon | about 28.3 °C, 97 % RH |
+| Water | 12 L sump, about 6-8 L/day in the dry season |
+| Power | 12 V, about 280 Wh/day in the dry season |
+| Overall size | 820 × 892 × 1230 mm on casters |
+| Cost | about PHP 19 300 with a wall adapter |
 
-| Ambient | Pad outlet | Chamber air | Chamber RH |
-|---------|-----------:|------------:|-----------:|
-| 34 °C / 55 % | 27.9 °C | 29.4 °C | ~88 % |
-| 33 °C / 62 % | 28.0 °C | 29.6 °C | ~90 % |
-| 28 °C / 78 % | 25.5 °C | 27.1 °C | ~95 % |
-| 31 °C / 78 % | 28.4 °C | 29.9 °C | ~95 % |
+### 2.2 How to present it
 
-So: 4-5 K below ambient on a dry-season afternoon, 1-2 K in the wet season, and 88-95 % RH throughout. Insulation and a heat load below 60 W are what keep the chamber close to the pad outlet; skimping on insulation costs more than a better pad gains.
+The group's case rests on efficiency and proof, not novelty: saturation efficiency near the physical limit, measured continuously over both seasons, plus a storage trial against ambient. Report efficiency, not only temperature drop, because efficiency removes the effect of the weather on test day and makes results comparable with other units.
 
-### 2.3 What makes it a defensible thesis, not a copy
-
-Pick one or two of these as the research question; all sit on free-to-use prior art:
-
-1. **Pad comparison with local agricultural residues** at the same face velocity: coir vs charcoal vs jute (or abaca), measuring saturation efficiency, pressure drop and efficiency decay over 4-6 weeks (mould). The durability angle is thin in the literature.
-2. **Humid-climate control strategy**: fan and pump duty cycling based on measured wet-bulb depression, and its effect on water use and chamber RH. The "intelligent evaporative cooling" systematic review (Preprints, Jan 2026) shows this space is active but not crowded, and the Sabjikothi application is the only IP found near it.
-3. **Load-side validation**: pulp-temperature cooling curves, weight loss and marketable fraction of tomato and pechay over 7-14 days, cooler vs ambient vs (if available) a domestic refrigerator.
-4. **Solar sizing**: energy audit of the 12 V system across a full dry-season day, PV and battery sizing for autonomy.
-
-Two things to state explicitly in the thesis so the novelty claim is honest: PhilMech built charcoal-pad cabinets of 50-400 kg in 2008, and Acedo built jute and rice-husk coolers in 1997. Your contribution is the scale, the instrumentation and control, and the comparative data, not the concept.
-
-### 2.4 Build sequence
-
-1. Build the chamber and pad frame; measure fan curve against pad pressure drop with a manometer.
-2. No-load test: 48 h runs per pad material, log ambient and chamber T/RH, compute saturation efficiency and water use.
-3. Add crates of tomato; run 7-14 day storage trials with ambient control.
-4. Add the controller and repeat one no-load and one loaded run to quantify water saved.
-5. Optional: solar and battery autonomy test.
-
-## 3. Bill of materials (indicative, Philippine market)
-
-| Item | Qty | Approx. PHP |
-|------|----:|------------:|
-| Marine plywood 12 mm, 4 × 8 ft | 1 | 1 200 |
-| EPS foam 50 mm or PU board | 2 m² | 800 |
-| 120 mm 12 V DC fans | 2 | 500 |
-| 12 V submersible pump 3 W | 1 | 350 |
-| PVC 1/2 in pipe, fittings, drip pipe | lot | 300 |
-| Galvanised mesh for pad frame | 1 m² | 250 |
-| Coconut coir (bulk), charcoal 5 kg, jute sacks | lot | 400 |
-| Plastic crates | 3 | 600 |
-| ESP32 + 2 × SHT31/DHT22 + MOSFET + float switch | 1 set | 1 200 |
-| 12 V 7 Ah SLA battery + 30 W PV panel + PWM controller | 1 set | 3 500 |
-| Hinges, silicone, food-grade liner, paint | lot | 700 |
-| **Total** | | **~9 800** |
-
-Without the solar kit, about PHP 6 300.
-
-## 4. Sources
+## 3. Sources
 
 Journal and institutional sources used for the numbers above (full citations to be added to the thesis reference list):
 

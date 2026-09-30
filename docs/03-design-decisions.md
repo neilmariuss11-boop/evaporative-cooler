@@ -1,51 +1,71 @@
 # Design decisions and rationale
 
-Decision log for the student-scale evaporative cooling cabinet. Each entry states the decision, why it was taken (research result, novelty, or patent avoidance), and what it rules out. Read this before `04-assembly-spec.md`; that file only gives geometry.
+Decision log for the student-scale evaporative cooling cabinet. Each entry states the decision, why it was taken (research result, efficiency, practicality or patent avoidance), and what it rules out. Read this before `04-assembly-spec.md`; that file only gives geometry.
 
-Status: decided with the project owner on 30 Sep 2026, except the items in section 3.
+Status: decided with the project owner on 30 Sep 2026, revised the same day. Two items remain open (section 4).
 
-## 1. Decisions taken with the owner
+## 1. Project priority
+
+**Application and cooling efficiency come first; novelty is not a goal.** The owner's group wants a unit that performs as close as possible to the physical limit and could be used by a vendor or farmer, not a new device made for its own sake. Every choice below follows from that.
+
+The physical limit is the outside wet-bulb temperature. In lowland Philippines it is about 25 to 27 °C for most of the year, so no evaporative cooler can go colder than that (see `02-design-recommendation.md`). "High efficiency" here means getting the chamber air as close to that floor as possible, measured as saturation efficiency.
+
+## 2. Decisions taken with the owner
 
 | # | Decision | Choice | Why |
 |---|----------|--------|-----|
-| D1 | Capacity | 25-35 kg of produce, three vented plastic crates, chamber 0.54 × 0.52 × 0.90 m (0.25 m³ gross) | Enough produce for 7-14 day shelf-life trials with replicates, still fits a lab bench and a tricycle sidecar. Matches the "small student scale" brief; PhilMech's smallest unit is 50-80 kg. |
-| D2 | Loading | Front hinged plug door, crates on side rails | Crates can be lifted out daily for weighing and swapped with the ambient control. Top-loading keeps humid air in but makes weighing awkward. |
-| D3 | Walls | 12 mm marine plywood outside, 50 mm EPS core, 3 mm PVC liner inside | School-shop fabrication, PHP-level cost, U about 0.57 W/m²K, keeps steady wall gain under 10 W. Rigid walls also keep the design clear of the Evaptainers fabric-wall claims (US 10,907,878). |
-| D4 | Pad position | Pad on the back wall, exhaust fans in the roof at the front | Classic cross-flow layout (PhilMech, Nigerian and Ethiopian active coolers). Fans at the front, not above the pad, so air must cross the crate stack instead of short-circuiting from pad to fan. |
-| D5 | Controller | ESP32 with ambient and chamber T/RH sensors, float switch, MOSFET-switched pump and PWM fans, SD logging, external display | Main novelty lever for a humid climate: fan and pump duty follow the measured wet-bulb depression, which saves water and avoids pointless fan running when the air is near saturation. Also gives the thesis its data logger for free. |
-| D6 | Base | Four 75 mm locking casters | Unit moves between lab, weighing station and field without two people carrying 60-70 kg. |
-| D7 | Pad media | Coconut coir, 75 mm, in a slide-out mesh cassette | Locally abundant, light, cheap to replace when mould appears. Literature puts coir at 53-70 % saturation efficiency at HVAC velocities and above 80 % at the low face velocity used here. The cassette lets charcoal and jute be swapped in for the pad-comparison experiment. |
-| D8 | Inspection | No window. Display on the outside of the electrical bay | A window adds heat gain and a leak path; the owner asked for an external display instead. The 2.8 in TFT on the bay's front face shows ambient and chamber T/RH, temperature drop, mode, water level and alarms, so the door stays shut. Feasible without any override. |
+| D1 | Capacity | 25-35 kg of produce, three vented plastic crates, chamber 0.54 × 0.52 × 0.90 m (0.25 m³ gross) | Enough produce for 7-14 day storage trials with replicates; still fits a lab bench or a tricycle sidecar. PhilMech's smallest unit is 50-80 kg. |
+| D2 | Loading | Front hinged plug door, crates on side rails | Crates lift out daily for weighing and swap with the ambient control. |
+| D3 | Walls | 12 mm marine plywood outside, 50 mm EPS core, 3 mm PVC liner inside | School-shop fabrication, low cost, U about 0.57 W/m²K, steady wall gain under 10 W. Rigid walls also keep the design clear of the Evaptainers fabric-wall claims (US 10,907,878). |
+| D4 | Pad position | Pad on the back wall, exhaust fans in the roof at the front | Classic cross-flow layout. Fans sit at the front, not above the pad, so air must cross the crate stack instead of short-circuiting from pad to fan. |
+| D5 | Controller | ESP32 with ambient, chamber and pad-outlet T/RH sensors, float switch, MOSFET-switched pump and PWM fans, SD logging, external display | Saves water and energy in humid weather, protects the pump, and logs every minute, which gives the group continuous proof of performance. |
+| D6 | Base | Four 75 mm locking casters | The unit moves between lab, weighing station and field without two people carrying 65 kg. |
+| D7 | Pad media | **Cellulose honeycomb 7090, 150 mm deep** (replaces coconut coir) | Highest practical efficiency: 150 mm cellulose reaches the high 80s % at 1 m/s and above 90 % at this design's 0.2 m/s, against 50-70 % for coir. Rigid, low pressure drop, lasts years with cleaning instead of weeks, and it is a commodity item sold by Philippine poultry and greenhouse suppliers. |
+| D8 | Inspection | No window. Display on the outside of the electrical bay | A window adds heat gain and a leak path. The 2.8 in display beside the door shows ambient and chamber conditions, temperature drop, pad efficiency, mode and water level. |
 | D9 | Model detail | Full assembly, every part dimensioned and positioned | For the Blender handoff. |
+| D10 | Efficiency definition | Get as close to the wet-bulb limit as possible, single stage | A two-stage unit would add 1.5-2 K on dry afternoons but doubles parts and cost and sits near the dew-point cooler patents. Not worth it for a practical unit. |
+| D11 | Testing scope | Test only the final design: commissioning, no-load performance in both seasons, storage trial | No pad-material comparison. |
+| D12 | Electronics fallback | Keep the controller, add a 3-position AUTO / OFF / MANUAL switch | If the electronics fail, MANUAL runs the fans at full speed and the pump continuously, so the cooler keeps working. Essential for a unit meant for real use. |
 
-## 2. Decisions taken by the designer (owner may override)
+## 3. Decisions taken by the designer (owner may override)
 
 | # | Decision | Choice | Why |
 |---|----------|--------|-----|
-| E1 | Single-stage direct cooling only | No indirect or dew-point stage | A two-stage unit gains 1-3 K in humid air but doubles parts and sits next to the Coolerado/Maisotsenko patent family. Left as a stretch goal in the docs. |
-| E2 | Large pad, low face velocity | Pad face 500 × 400 mm (0.20 m²), 75 mm thick, design airflow 120 m³/h, face velocity about 0.17 m/s | Pad studies show saturation efficiency falling from 80-90 % below 1 m/s to 50-60 % at 2-3 m/s. Low velocity also keeps pressure drop under about 10 Pa, which is all a 120 mm axial fan can push. |
-| E3 | Pull-through fans | Two 120 mm 12 V 4-pin PWM fans exhausting through the roof under a rain hood | Fans stay on the dry side; the chamber runs at slight negative pressure so the only inlet is the pad. Two small fans give redundancy and finer duty control than one large fan. |
-| E4 | Once-through air, no recirculation | Inlet only through the pad, outlet only through the fans | Recirculating chamber air saturates the pad inlet and kills cooling. Also avoids the sump-air pre-cooling loop claimed in US 2014/0174116. |
-| E5 | Water distribution | 1/2 in PVC drip pipe, 20 holes of 2 mm at 25 mm pitch, gravity return straight into an open-top sump under the cassette | Century-old prior art, nothing to infringe, no drain tray needed because the sump covers the whole cassette footprint. Keeps clear of the distributor claimed in US 9,310,134. |
-| E6 | Sump | Fabricated 540 × 115 × 200 mm PVC-sheet tank, 8 L working, float switch low-level cut-out, overflow, external fill port and sight tube | Calculated evaporation is 3-8 L/day in the dry season, so 8 L gives one to two days between refills. |
-| E7 | Cassette loading | Cassette drops in through a gasketed hatch in the roof of the rear module | Swapping media takes two minutes and does not disturb the chamber or door. |
-| E8 | Electrical bay on the right side wall, outside the insulation | 150 × 250 × 350 mm plywood box with the display on its front face | Electronics stay dry and away from the wet rear module; display is beside the door where the operator stands. |
-| E9 | Modular 12 V power | 12 V bus with a barrel-jack input, fuse and main switch; space reserved for a 12 V 20 Ah battery and a PWM solar charge controller | Owner has not chosen between adapter, battery and PV. This bay accepts all three without redesign. See section 3. |
-| E10 | Crate rails | 40 × 40 × 3 mm aluminium angle, three levels, 280 mm pitch | Fits generic 480-500 mm wide vented crates with 10-20 mm bearing each side; 50 mm air gap between crate levels. |
-| E11 | Exterior finish | White exterior paint, varnished edges | White cuts solar gain if the unit is used outdoors; the roof is the main solar receiver. |
-| E12 | Sensor placement | Ambient sensor in the rear module inlet air, chamber sensor at mid-height between crate levels 1 and 2, optional pad-outlet sensor at the pad opening | Ambient must be the actual pad inlet air. Chamber sensor sits in the produce zone, not in the pad-outlet plenum, so the reported temperature drop is honest. |
-| E13 | No sterilisation, no ozone or UV, no IoT cloud | Local logging only | Keeps the design clear of the Sabjikothi application and keeps the thesis focused. A Wi-Fi dashboard can be added later without geometry changes. |
+| E1 | Large pad face, low face velocity | Pad face 500 × 400 mm (0.20 m²), 150 mm deep, design airflow 150 m³/h, face velocity 0.21 m/s | Saturation efficiency rises as velocity falls and as depth grows. Pressure drop stays under 5 Pa, well within what 120 mm axial fans can push. |
+| E2 | Airflow 150 m³/h | Up from 120 in the first draft | The cellulose pad's lower pressure drop lets the fans move more air. More air keeps the chamber closer to pad-outlet temperature under load: 1.2 K above it at 60 W instead of 1.5 K. |
+| E3 | Pull-through fans | Two 120 mm 12 V 4-pin PWM fans exhausting through the roof under a rain hood | Fans stay dry; the chamber runs at slight negative pressure so the only inlet is the pad. Two fans give redundancy and finer control. |
+| E4 | Once-through air, no recirculation | Inlet only through the pad, outlet only through the fans | Recirculating chamber air would raise the pad-inlet humidity and kill cooling. It also avoids the sump-air pre-cooling loop claimed in US 2014/0174116. |
+| E5 | Water distribution built into the cassette | Pipe with upward jets under a full-width aluminium cap, fed through a hose quick coupler | Cellulose pads need even wetting across their full 150 mm depth. The cap method is standard in commercial pad systems. Building it into the cassette lets the whole assembly lift out after unplugging one coupler. |
+| E6 | Pump sized to the pad | 12 V brushless DC, 300-500 L/h at 1 m head, 8-12 W, run in pulses | The manufacturer's efficiency data assume a wash rate of about 4.5 L/min for this pad size. Pulsing (2 min on / 3 min off by default, tuned at commissioning) keeps the pad wet at 40 % of the pump energy. |
+| E7 | Sump 12 L | 540 × 190 × 200 mm PVC tank under the whole cassette footprint | Covers one dry-season day of evaporation. No separate drip tray needed. |
+| E8 | Daily dry-out | 45 min with pump off and fans at 60 %, default 06:00 | Standard practice for cellulose pads to stop algae; scheduled when the cooling need is lowest. |
+| E9 | Cassette through a roof hatch | Cassette lifts straight up through a gasketed hatch | Pad cleaning and replacement take minutes and do not disturb the chamber or door. |
+| E10 | Electrical bay on the right side wall | 150 × 250 × 350 mm plywood box, display on its front face | Electronics stay dry and away from the wet module; display is beside the door where the operator stands. |
+| E11 | Modular 12 V power | 12 V bus with barrel-jack input, fuse, main switch and mode switch; space reserved for a battery and a solar charge controller | Power source is still open (O1); the bay accepts all three options without redesign. |
+| E12 | Crate rails | 40 × 40 × 3 mm aluminium angle, three levels, 280 mm pitch | Fits common 480-500 mm vented crates with a 50 mm air gap between levels. |
+| E13 | White exterior | White paint, varnished edges | Cuts solar heat gain when the unit is used outdoors. |
+| E14 | Three sensors | Ambient in the inlet air, pad outlet at the pad opening, chamber at mid-height between crate levels 1 and 2 | Pad efficiency needs inlet and pad-outlet readings. Chamber efficiency needs a reading in the produce zone, so the reported temperature drop is honest. |
+| E15 | No sterilisation, UV, ozone or cloud connection | Local logging only | Keeps the unit simple and clear of the Sabjikothi application. Wi-Fi can be added later without geometry changes. |
 
-## 3. Open decisions (owner to confirm)
+## 4. Open decisions (owner to confirm)
 
 | # | Item | Options | Effect on the model | Default used until decided |
 |---|------|---------|---------------------|----------------------------|
-| O1 | Power source | (a) 12 V 3 A wall adapter; (b) adapter plus 12 V 20 Ah battery for autonomy; (c) battery plus 50 W solar panel on a separate stand or a roof bracket | (a) and (b) change nothing outside the bay. (c) adds a 50 W panel (about 670 × 450 × 25 mm) either free-standing or on a tilted bracket over the roof; the bracket would sit behind the fan hood. | (b): bay is modelled with the battery and charge-controller footprints present, panel not modelled. |
-| O2 | Test crop | Tomato plus pechay; tomato only; other | Only the crate contents in renders and the storage protocol in `05-systems-and-protocol.md`. No geometry change. | Crates modelled empty or with generic round fruit. |
+| O1 | Power source | (a) 12 V 3 A wall adapter; (b) adapter plus 12 V 20 Ah battery; (c) battery plus a 100 W solar panel on a separate stand | (a) and (b) change nothing outside the bay. (c) adds a free-standing panel of about 1000 × 670 mm; it is too large for the cabinet roof. | (b): battery and charge-controller footprints are modelled in the bay; no panel. |
+| O2 | Test crop | Tomato plus a leafy crop; tomato only; other | Only crate contents in renders and the storage protocol in `05-systems-and-protocol.md`. | Crates modelled empty or with generic round fruit. |
 
-## 4. How the design relates to the research and to novelty
+## 5. Positioning: what the unit is, and what it is not
 
-* **Climate reality.** Calculations in `02-design-recommendation.md` show 6-8 K of wet-bulb depression on Philippine dry-season afternoons and 1-3 K in the wet season. The controller's two modes exist because of this: DRY mode maximises cooling, HUMID mode keeps the chamber at 90-95 % RH with minimum water and fan energy. No published small cooler switches behaviour on measured wet-bulb depression; that is the thesis's main claim to novelty, together with the pad-material durability comparison.
-* **Efficiency.** Large pad, low face velocity and once-through airflow are what the pad literature says gives the highest saturation efficiency; the fans are sized for airflow, not for pressure.
-* **Freedom to operate.** Every claimed-feature risk listed in `01-patent-landscape.md` is avoided by construction: rigid walls, single stage, plain drip pipe, no sump-air loop, no fabric evaporator wall, no sterilisation.
-* **Honest prior art.** PhilMech (2008) built charcoal-pad cabinets of 50-400 kg; Acedo (1997) built jute and rice-husk coolers; the UPLB thesis built a two-stage unit. This design is smaller, instrumented, climate-adaptive and swappable-media, and the thesis should say exactly that.
+**Not a new invention.** An earlier draft of this log claimed that switching modes on measured wet-bulb depression was new. A later search found close prior art: microcontroller-controlled produce coolers published since at least 2017, a 2026 systematic review of intelligent evaporative cooling for postharvest storage, and US patents on evaporative cooler control. That claim is withdrawn.
+
+**What the group can honestly claim:**
+* **Performance near the physical limit.** A target pad saturation efficiency of 85-95 %, against 50-70 % for the natural-fibre pads used in most published student and extension coolers, including coir and jute.
+* **A practical unit.** Commodity parts, a pad that lasts years, a 12 V supply, a manual fallback, one-day water autonomy in the dry season, and one-person handling on casters.
+* **Proof, not claims.** Continuous logging of ambient, pad-outlet and chamber conditions, water and energy, over both seasons, plus a storage trial against ambient.
+* **Credit where due.** PhilMech built charcoal-pad cabinets of 50-400 kg in 2008; Acedo built jute and rice-husk coolers in 1997. The group's unit is smaller, more efficient and fully instrumented.
+
+## 6. Patent check on the final design
+
+Every claimed-feature risk in `01-patent-landscape.md` is avoided by construction: rigid walls, single stage, plain drip distribution under a cap, no sump-air loop, no fabric evaporator wall, no sterilisation. Buying and using a commercial cellulose pad does not infringe anything; the original CELdek patents are decades old and the 7090 pad is a generic commodity.
+
+**One item to verify.** US 2022/0026095, "Evaporative cooler wet and dry mode control", and US 10,145,572 and US 10,969,126, "Direct evaporative cooling system with precise temperature control", are close to the controller's behaviour. The first appears to cover a hybrid unit with a cooling coil downstream, which this design does not have. Running fans with the pump off, as in the SATURATED and DRY-OUT modes, is standard pad-cooler practice recommended by pad manufacturers. Open all three in Espacenet, read the independent claims, and check whether any is in force in the Philippines.
