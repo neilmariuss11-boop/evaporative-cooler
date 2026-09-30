@@ -1,6 +1,6 @@
 # Device-level novelty through software: search results and options
 
-Status: ideation and screening search, 30 Sep 2026. Nothing here is in the design yet; the owner picks an option first.
+Status: ideation and screening search, 30 Sep 2026. **Option 1 was chosen** and is in the design as concept Option B - Scale: geometry in `04-assembly-spec.md` group F, firmware in `05-systems-and-protocol.md` section 5.4. Final cost of the scale is about PHP 2,600 with a sealed load cell, not the PHP 600-900 first estimated below.
 
 Goal set by the owner: a device-level novelty that is mostly software, so it adds little cost, and that serves the application rather than knowledge for its own sake.
 
@@ -25,7 +25,7 @@ Why weight loss: in a humid tropical climate the cooler can only take a few degr
 
 ## 3. Options
 
-### Option 1 (recommended): weight-loss budget control with a sentinel crate
+### Option 1 (chosen): weight-loss budget control with a sentinel crate
 
 **Hardware added.** The cooler's one standard crate becomes the "sentinel" and sits on a weighing platform: a single-point aluminium bar load cell (20-30 kg) with an HX711 amplifier. The amplifier lives in the dry electrical bay; the load cell is coated for humidity. Cost about PHP 600-900.
 

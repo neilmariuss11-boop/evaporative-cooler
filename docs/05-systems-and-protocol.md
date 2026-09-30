@@ -108,21 +108,38 @@ A solar panel can be added later without redesign: a PV charge controller would 
 ```
  15 V adapter ── DC jack ── DC-UPS module IN
                             DC-UPS module BAT ── 5 A fuse ── 12 V 12 Ah SLA
-                            DC-UPS module OUT ── FUSE 3 A ── MAIN SW ──┬──── +12 V bus (13.8 V on mains) ─────────┐
-                                                                       │                                         │
-                     MODE SWITCH (3-position, 3-pole)                                                     BUCK 12→5 V ── ESP32 5V
-                      AUTO: fans ← MOSFET_fans, pump ← MOSFET_pump                                               │
-                      OFF:  fans and pump unpowered                                                              ├── SHT31 ambient  (I2C 0x44, bus 1)
-                      MANUAL: fans ← +12 V direct (PWM open → full speed),                                       ├── SHT31 chamber  (I2C 0x45, bus 1)
-                              pump ← +12 V direct                                                                ├── SHT31 pad outlet (I2C 0x44, bus 2)
-                                                                                                                 ├── DS18B20 pulp probe (1-Wire GPIO4, 4.7 kΩ)
- FAN1/2 PWM  ◄── GPIO25 (25 kHz)      MOSFET_fans gate ◄── GPIO32                                                 ├── Float switch ─► GPIO34 (pull-up)
- FAN1/2 TACH ──► GPIO26 / GPIO27      MOSFET_pump gate ◄── GPIO33                                                 ├── Mode sense ─► GPIO35 (AUTO = low)
- Bus voltage ── 100 kΩ / 22 kΩ divider ──► GPIO36                                                                  ├── TFT 2.8" SPI (GPIO18/19/23/5, DC 16, RST 17)
- Adapter present ── 100 kΩ / 22 kΩ divider (from DC jack) ──► GPIO39                                               ├── microSD SPI (CS 15)
-                                                                                                                 ├── Buttons GPIO12/13/14 (pull-up)
- GND ─────────────────────────────────────────────────────────────────────────────────────────────────────────── └── Status LED GPIO2
+                            DC-UPS module OUT ── FUSE 3 A ── MAIN SW ──┬──── +12 V bus (13.8 V on mains) ──────┐
+                                                                       │                                      │
+                     MODE SWITCH (3-position, 3-pole)                                                  BUCK 12→5 V ── ESP32-S3 5V
+                      AUTO:   fans ← MOSFET_fans, pump ← MOSFET_pump
+                      OFF:    fans and pump unpowered
+                      MANUAL: fans ← +12 V direct (PWM open → full speed), pump ← +12 V direct
+
+ ESP32-S3 (3.3 V logic) connects to: 3 × SHT31 on two I2C buses, DS18B20 pulp probe, HX711 + load cell,
+ fan PWM and two tach lines, two MOSFET gates, float switch, mode sense, bus-voltage divider,
+ TFT and microSD on one SPI bus, three buttons, status LED.   Pin map below.
 ```
+
+**Pin map (ESP32-S3-DevKitC-1).** The controller changed from the classic ESP32 to the ESP32-S3 because the scale needs two more pins than the classic board had free.
+
+| Signal | GPIO | Notes |
+|--------|-----:|-------|
+| Bus voltage (100 kΩ / 22 kΩ divider) | 1 | ADC. Above 13.3 V means the adapter is present; below means running on battery |
+| Status LED | 2 | |
+| I2C-0 SDA / SCL | 4 / 5 | SHT31 ambient (0x44) and chamber (0x45) |
+| I2C-1 SDA / SCL | 15 / 16 | SHT31 pad outlet (0x44) |
+| DS18B20 pulp probe (1-Wire, 4.7 kΩ pull-up) | 6 | |
+| HX711 DOUT / SCK | 7 / 17 | Load cell, 10 samples per second |
+| Fan PWM (25 kHz) | 18 | Both fans in parallel |
+| Fan 1 / fan 2 tach | 8 / 9 | Open-collector, 10 kΩ pull-ups to 3.3 V |
+| SPI MOSI / SCK / MISO | 11 / 12 / 13 | Shared by TFT and microSD |
+| TFT CS / DC | 10 / 14 | TFT reset tied to the board's EN line |
+| microSD CS | 38 | |
+| MOSFET gate, fans / pump | 39 / 40 | |
+| Float switch / mode sense | 41 / 42 | Pull-ups; low = water OK / AUTO |
+| Buttons menu / up / down | 47 / 48 / 21 | Pull-ups, active low |
+
+Check the pin map against the exact board revision before wiring: the on-board RGB LED sits on GPIO48 on some DevKitC-1 revisions and on GPIO38 on others. Disable it or swap that pin.
 
 The controller stays powered in every mode position so it keeps logging and displaying. In MANUAL it reads the mode-sense pin, shows "MANUAL", and does not drive the MOSFETs. The float-switch pump cut-out works only in AUTO; the display still shows "FILL" in MANUAL.
 
@@ -139,7 +156,7 @@ All cables outside the bay run in 16 mm PVC conduit. Entries into the chamber an
 * `eta_pad = (T_amb - T_pad) / WBD`: pad saturation efficiency, shown on the display and logged. This is the headline performance number.
 * `eta_ch = (T_amb - T_ch) / WBD`: chamber cooling efficiency.
 * `water_ok` from the float switch (debounced 5 s).
-* `V_bus` from the bus-voltage divider and `mains` from the adapter-present divider, every 10 s.
+* `V_bus` from the bus-voltage divider every 10 s; `mains` is true while `V_bus` is above 13.3 V (the charger's float voltage), false on battery.
 
 ### 5.2 Modes (AUTO position)
 
@@ -170,12 +187,16 @@ every 10 s:
     elif WBD >= 3.0:                               mode = DRY
     elif WBD < 2.5:                                mode = HUMID
     # otherwise keep the previous mode (hysteresis band)
-    if not mains and V_bus < 12.2: apply battery saving
+    read scale (median of 20); detect settled steps → new batch or new segment
+    every hour: update rate, k, saved_kg, days_left; set budget_state (PROTECT / ECO / none)
+    apply budget_state
+    if not mains and V_bus < 12.2: apply battery saving (overrides ECO and PROTECT)
     set fan_pwm(mode); schedule pump duty(mode)
 every 60 s:
     append CSV row: timestamp, T_amb, RH_amb, T_wb, WBD, T_pad, eta_pad, T_ch, RH_ch, eta_ch,
                     T_pulp, mode, switch_pos, fan_pwm, pump_state, water_ok, fan1_rpm, fan2_rpm,
-                    mains, V_bus
+                    mains, V_bus, weight_kg, batch_id, segment_id, loss_pct, rate_pct_day,
+                    VPD_ch, k, rate_amb, saved_kg, days_left, budget_state
 display refresh every 2 s:
     AMB 33.1C 62%   WB 26.8
     CHM 27.6C 95%   dT 5.5
@@ -184,6 +205,59 @@ display refresh every 2 s:
 ```
 
 Logging is to microSD in daily CSV files. No wireless in this version.
+
+### 5.4 Sentinel crate: weight-loss tracking and budget
+
+This is the design's novelty feature: the cooler weighs its own produce and manages how fast it loses water. Hardware: the crate stands on a 30 kg single-point load cell read by an HX711 (see `04-assembly-spec.md`, group F). The shelf produce is not weighed.
+
+**Operator settings (menu).**
+
+| Setting | Default | Notes |
+|---------|---------|-------|
+| Crop | Tomato | Sets the weight-loss limit and target days below |
+| Weight-loss limit, % | Tomato 7; leafy greens (pechay) 4; eggplant 6; other 5 | Typical marketability limits from classic postharvest tables; confirm for the crop and market used |
+| Target storage days | Tomato 7; leafy greens 3; eggplant 5; other 5 | |
+| Price per kg | blank | Optional; turns "kg saved" into pesos |
+| NEW BATCH | | Starts a batch by hand; also detected automatically |
+| TARE | | Zeroes the empty platform; run with the crate removed |
+
+**Signal chain.**
+1. Read the HX711 at 10 samples per second; every 10 s take the median of the last 20 samples.
+2. Convert to kilograms with the calibration gain, and subtract the temperature correction `c_T × (T_ch - T_cal)` found at commissioning.
+3. Keep 10-minute means for the loss calculations. Weight-loss rates always come from 12-24 hour windows, because the produce loses only 10-30 g a day and a cheap load cell drifts a few grams over a day.
+
+**Events.**
+* A rise of more than 2 kg that settles (spread under 10 g for 60 s), or the NEW BATCH button, starts a new batch: record `m0` and the start time.
+* Any other step of more than 0.1 kg that settles closes the current segment and opens a new one at the new weight. This covers produce sold, produce added, and the crate being lifted.
+* Batch loss over several segments is `loss = 1 - Π(end_i / start_i)`, so selling produce does not count as weight loss.
+
+**Derived values (updated hourly once a segment has 12 h of data).**
+* `rate`: least-squares slope of the 10-minute means over the last 24 h of the segment, as % of mass per day.
+* `VPD_ch`: drying power at the produce surface, `p_ws(T_pulp) - RH_ch/100 × p_ws(T_ch)`, in kPa, averaged over the same window.
+* `k = rate / VPD_ch`: this batch's own drying coefficient, learned on the spot.
+* `rate_amb = k × p_ws(T_amb) × (1 - RH_amb/100)`: the rate the same produce would lose on an open shelf in the ambient air the cooler is measuring. This assumes produce on a shelf sits near air temperature.
+* `saved_kg`: running sum of `(rate_amb - rate) × mass × Δt`.
+* `days_left = (limit - loss) / rate`.
+
+**Budget overlay (applied hourly on top of the mode in section 5.2; no action in the first 12 h).**
+* `allowed = (limit - loss) / max(target_days - elapsed_days, 0.5)`.
+* **PROTECT** when `rate > 1.1 × allowed`: skip the daily dry-out, use DRY-mode pump pulses even in HUMID mode, and keep the fans at 50 % or more.
+* **ECO** when `rate < 0.6 × allowed` and the mode is DRY: fans capped at 50 % and pump off-times stretched by half, saving water and energy while the produce is well within budget.
+* Otherwise no change. The battery overlay in section 5.2 takes priority over ECO and PROTECT.
+
+**Display, page 2 (produce).** Page 1 shows air conditions as in section 5.3; the up/down buttons switch pages.
+
+```
+TOMATO   day 2.4 of 7        ON TRACK
+WT 9.14 kg     LOST 1.3 %
+RATE 0.42 %/day
+~13 days to 7 % limit
+SAVED vs shelf 0.21 kg  (P 17)
+```
+
+Status words: ON TRACK, PROTECT, ECO, SETTLING (a step was just detected), NO DATA (under 12 h).
+
+**Fallback.** If the scale fails its daily sanity check (reading jumps with no settled step, or drifts more than 30 g a day with an empty platform), the display shows "SCALE CHECK" and the controller estimates the loss from literature drying coefficients for the chosen crop instead, marked "EST".
 
 ## 6. Test protocol
 
@@ -197,6 +271,9 @@ The final design is tested on its own. There is no pad-material comparison.
 4. **Pump duty.** On a dry afternoon, run the pump continuously for 30 min, then at 2/3, 2/6 and 2/9 minutes on/off for 30 min each. Keep the longest off-time that raises the pad-outlet temperature by less than 0.2 K; write it into the DRY-mode setting.
 5. **Sensors.** Place all three SHT31s in one bag for 30 min; they must agree within 0.3 K and 3 % RH. Enter offsets in firmware.
 6. **Manual override.** Switch to MANUAL and confirm fans at full speed and pump running with the controller disconnected.
+7. **Scale isolation.** With the empty crate on the platform, press lightly on the shelf, the walls and the cables; the reading must not change by more than 2 g. Set the four overload-stop screws to 0.5 mm under the platform ribs with a feeler gauge.
+8. **Scale calibration.** TARE with the platform empty, then place known masses of 1, 5 and 10 kg (sealed water jugs checked on a bench scale). Enter the gain; all three must read within ±5 g.
+9. **Scale drift and temperature.** Leave a sealed 10 kg water jug on the platform for 48 h with the cooler running. Fit the reading against chamber temperature to get `c_T`; after correction the reading must stay within ±5 g over 24 h.
 
 ### 6.2 Test A: no-load performance
 
@@ -215,6 +292,11 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 * Daily: crate weight (0.01 kg), pulp temperature, colour stage (USDA 1-6), firmness (hand scale or penetrometer), decay count, marketable fraction.
 * Duration: until 50 % of the ambient sample is unmarketable, or 14 days.
 * Metrics: cumulative weight loss %, days to colour stage 6, marketable % at day 7 and day 14, shelf-life extension in days.
+* Sentinel crate validation:
+  * Weigh the cooler crate daily on a bench scale (0.01 kg) at the same time as the built-in scale reading; the two must agree within ±20 g.
+  * Compare the cooler's `saved_kg` estimate with the real difference in weight loss between the cooler crate and the ambient crate. This tests the "saved vs shelf" figure the vendor sees.
+  * Compare the predicted `days_left` on day 2 with the day the crate actually reached the weight-loss limit (or the trial end).
+  * Log how often the budget overlay went to PROTECT or ECO, and the water and energy used per day, against Test A days with the same wet-bulb depression.
 * Run once in the dry season and once in the wet season.
 
 ### 6.4 Formulas
@@ -224,6 +306,9 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 * Cooling capacity: `Q = rho * V * c_p * (T_amb - T_pad)` with rho 1.15 kg/m³, c_p 1006 J/kg K, V in m³/s.
 * Water use: sight-tube level change times 530 × 180 mm² per mm, plus refills.
 * Specific water use: L per kWh of cooling and L per kg of produce per day.
+* Batch weight loss across segments: `loss = 1 - Π(end_i / start_i)`.
+* Drying power at the produce surface: `VPD_ch = p_ws(T_pulp) - RH_ch/100 × p_ws(T_ch)`; on an open shelf: `VPD_amb = p_ws(T_amb) × (1 - RH_amb/100)`.
+* Batch drying coefficient: `k = rate / VPD_ch`; estimated shelf rate: `rate_amb = k × VPD_amb`.
 
 ## 7. Bill of materials
 
@@ -244,7 +329,7 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 13 | Float switch, vertical |  | 1 | 120 |
 | 14 | PVC pipe 1/2 in, elbow, cap, 32 mm port and cap, 20 mm overflow, barbs |  | lot | 350 |
 | 15 | Vinyl hose 12 mm ID, 1/2 in ball valve, 1/2 in hose quick coupler | 1.5 m | 1 | 450 |
-| 16 | Aluminium angle 40 × 40 × 3 (crate and shelf rails) | 1.5 m | 1 | 300 |
+| 16 | Aluminium angle 40 × 40 × 3 (shelf rails) | 0.8 m | 1 | 200 |
 | 17 | Aluminium angle 20 × 20 × 2 (cassette frame, shelf frame and lips) | 7 m | 1 | 650 |
 | 18 | Aluminium angle 25 × 25 × 3 (cassette stops) | 0.4 m | 1 | 80 |
 | 19 | PVC U-channel (cassette guides) | 0.9 m | 1 | 150 |
@@ -255,7 +340,7 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 24 | Slatted tray for the ambient shelf control | same size as the shelf | 1 | 250 |
 | 25 | EPDM D-gasket 10 mm, foam tape | 4 m |  | 200 |
 | 26 | Stainless hinges 75 mm, draw latches, D-handle, toggle latches, rivets |  | lot | 650 |
-| 27 | ESP32 DevKitC |  | 1 | 350 |
+| 27 | ESP32-S3-DevKitC-1 |  | 1 | 450 |
 | 28 | SHT31 sensor modules | ambient, chamber, pad outlet | 3 | 900 |
 | 29 | DS18B20 waterproof probe |  | 1 | 120 |
 | 30 | 2.8 in SPI TFT 320 × 240 |  | 1 | 450 |
@@ -268,7 +353,15 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 37 | 12 V DC-UPS / SLA charge module with low-voltage cut-off | 15-18 V in, ~1.2 A charge | 1 | 600 |
 | 38 | Inline 5 A blade fuse holder, battery leads and terminals | | 1 | 100 |
 | 39 | White exterior paint, varnish, silicone, screws, PVC cement |  | lot | 800 |
-| | **Total** | | | **~20 800** |
+| 40 | Single-point load cell, 30 kg, IP66, class C3, 150 × 40 × 40 | sentinel crate | 1 | 1,200 |
+| 41 | HX711 amplifier board and small shielded box | | 1 | 150 |
+| 42 | Aluminium plate 4 mm (scale platform) | 0.5 × 0.35 m | 1 | 500 |
+| 43 | Aluminium flat bar 20 × 3 and angle 20 × 20 × 2 (platform edges and ribs) | 2.2 m | 1 | 250 |
+| 44 | HDPE block (floor hardpoint and overload stops), aluminium spacers, M6 and M8 bolts, nylon-tipped screws | | lot | 400 |
+| 45 | Shielded 4-core cable, extra M16 gland | 1.5 m | 1 | 100 |
+| | **Total** | | | **~23 400** |
+
+The sentinel-crate scale adds about PHP 2,600, more than the PHP 600-900 first estimated. The difference is the sealed IP66 load cell, which the constant 90-95 % humidity needs, and the stiff platform. A cheaper unsealed load cell (about PHP 300) with a silicone boot would cut the scale cost to about PHP 1,700 but will likely drift more.
 
 Prices are 2026 Metro Manila hardware, poultry-supply and electronics-shop estimates; expect ±30 %. Cellulose 7090 pad is sold by poultry-house and greenhouse suppliers and online in standard sheets, commonly 600 mm wide in 1200-1800 mm lengths; one sheet makes several replacement cassettes.
 

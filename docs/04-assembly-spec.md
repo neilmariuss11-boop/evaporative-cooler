@@ -2,7 +2,7 @@
 
 Complete dimensioned parts list for the student-scale evaporative cooling cabinet. Every part has a name, size, position, and material. Positions are the part's bounding box in the global frame unless stated as a centre.
 
-Revision: half-capacity layout, 12-17 kg of produce in one standard crate plus one slatted shelf.
+Revision: concept **Option B - Scale**. Half-capacity layout (12-17 kg in one standard crate plus one slatted shelf), wall adapter with backup battery, and the crate standing on a built-in weighing platform (the "sentinel crate") so the cooler can measure the produce's own weight loss.
 
 ## 1. Conventions
 
@@ -12,7 +12,7 @@ Revision: half-capacity layout, 12-17 kg of produce in one standard crate plus o
 * **Bounding boxes** are written `X a..b, Y c..d, Z e..f`. Cylinders are given by axis, centre and diameter.
 * **Naming:** `GROUP_part_variant`. Blender collections follow the group letters in section 3.
 * **Wall sandwich rule:** every insulated wall is three layers, outside to inside: 12 mm plywood, 50 mm EPS, 3 mm PVC liner (65 mm total). Model each wall as one block with three sub-blocks, or as one block with a single material if layer detail is not needed.
-* **Materials and colours (sRGB hex):** plywood painted white exterior `#F2F2EE`; plywood natural (interior of bay) `#C9A46B`; EPS foam `#FFFFFF` (only visible in cut-away); PVC liner white `#FAFAFA`; aluminium angle and sheet `#B8BCC0`; cellulose pad kraft brown `#A9743A` (flutes darker `#7E5424`); PVC pipe grey `#8E8E8E`; sump PVC sheet dark grey `#4A4A4A`; fan black `#1E1E1E`; fan guard chrome `#C8C8C8`; crate green `#2E8B57`; shelf slats polypropylene white `#E8E8E8`; casters black rubber `#202020` with grey plate `#8A8A8A`; EPDM gasket black `#151515`; TFT display glass `#0B0B0B`; stainless hinges and latches `#D0D2D5`; cables black `#111111`; clear vinyl hose and sight tube `#DDEEFF` at 40 % alpha.
+* **Materials and colours (sRGB hex):** plywood painted white exterior `#F2F2EE`; plywood natural (interior of bay) `#C9A46B`; EPS foam `#FFFFFF` (only visible in cut-away); PVC liner white `#FAFAFA`; aluminium angle and sheet `#B8BCC0`; load cell anodised silver `#C0C4C8` with a black potting face `#1A1A1A`; HDPE hardpoint and stops off-white `#EDEBE4`; rubber overload-stop tips black `#202020`; cellulose pad kraft brown `#A9743A` (flutes darker `#7E5424`); PVC pipe grey `#8E8E8E`; sump PVC sheet dark grey `#4A4A4A`; fan black `#1E1E1E`; fan guard chrome `#C8C8C8`; crate green `#2E8B57`; shelf slats polypropylene white `#E8E8E8`; casters black rubber `#202020` with grey plate `#8A8A8A`; EPDM gasket black `#151515`; TFT display glass `#0B0B0B`; stainless hinges and latches `#D0D2D5`; cables black `#111111`; clear vinyl hose and sight tube `#DDEEFF` at 40 % alpha.
 
 ## 2. Overall envelope
 
@@ -29,7 +29,7 @@ Revision: half-capacity layout, 12-17 kg of produce in one standard crate plus o
 | Overall height to top of hood | 920 |
 | Chamber interior (clear) | X 65..605, Y 65..585, Z 205..795 (540 × 520 × 590, 0.166 m³) |
 | Capacity | one standard crate (8-10 kg) plus one shelf of loose produce (4-7 kg): 12-17 kg |
-| Mass estimate, with 10 L of water, no produce | about 50 kg |
+| Mass estimate, with 10 L of water and the battery, no produce | about 53 kg |
 
 Wall centre-plane reference: shell centre X = 335, chamber centre Y = 325.
 
@@ -63,9 +63,11 @@ All walls follow the sandwich rule. Extents are the full 65 mm sandwich.
 | `SHELL_pad_opening` | rectangular cut through `SHELL_wall_back`, lined with 3 mm PVC on its four faces | X 85..585, Y 585..650, Z 360..660 (500 wide × 300 high) |
 | `SHELL_door_opening` | the front of the chamber is entirely open; the 65 mm ring formed by floor, roof and side walls is the door frame face at Y 0 | X 65..605, Z 205..795 |
 | `SHELL_gasket_door` | EPDM D-profile 10 × 10 mm, glued to the frame face at Y 0, ring centred 20 mm outside the opening edge | ring outer X 35..635, Z 175..825; ring inner X 55..615, Z 195..805; Y -10..0 |
+| `SHELL_hardpoint` | HDPE block set into the floor in place of the EPS, under the load cell, so the scale bolts to something solid. The PVC liner runs over it; the two bolt holes are sealed with silicone | X 240..430, Y 290..360, Z 152..202 |
 | `SHELL_floor_drain` | 20 mm PVC tank fitting through the floor, with 12 mm hose stub below | axis Z, centre (335, 560), Z 130..210 |
 | `SHELL_gland_chamber_sensor` | M16 cable gland through the right wall, exiting directly inside the electrical bay | axis X, centre (Y 120, Z 530), X 605..690 |
 | `SHELL_gland_pulp_probe` | M16 cable gland through the right wall, exiting directly inside the electrical bay | axis X, centre (Y 200, Z 560), X 605..690 |
+| `SHELL_gland_loadcell` | M16 cable gland through the right wall for the load-cell cable, exiting directly inside the electrical bay | axis X, centre (Y 230, Z 590), X 605..690 |
 | `SHELL_hole_fan_1` | round hole through roof | axis Z, centre (185, 205), dia 118 |
 | `SHELL_hole_fan_2` | round hole through roof | axis Z, centre (485, 205), dia 118 |
 
@@ -94,12 +96,12 @@ Uninsulated plywood box behind the back wall. Contains the pad cassette with its
 
 | Name | Description | Size | Position |
 |------|-------------|------|----------|
-| `PAD_side_left` | 12 mm plywood, painted | 12 × 210 × 720 | X 0..12, Y 650..860, Z 140..860 |
-| `PAD_side_right` | same | | X 658..670, Y 650..860, Z 140..860 |
-| `PAD_floor` | 12 mm plywood, PVC-lined top | 646 × 210 × 12 | X 12..658, Y 650..860, Z 140..152 |
-| `PAD_top_side_L` | 12 mm plywood strip, part of the top frame around the hatch | 53 × 210 × 12 | X 12..65, Y 650..860, Z 848..860 |
-| `PAD_top_side_R` | same | | X 605..658, Y 650..860, Z 848..860 |
-| `PAD_top_rear` | 12 mm plywood strip | 540 × 38 × 12 | X 65..605, Y 822..860, Z 848..860 |
+| `PAD_side_left` | 12 mm plywood, painted; butts against the rear panels | 12 × 198 × 720 | X 0..12, Y 650..848, Z 140..860 |
+| `PAD_side_right` | same | | X 658..670, Y 650..848, Z 140..860 |
+| `PAD_floor` | 12 mm plywood, PVC-lined top | 646 × 198 × 12 | X 12..658, Y 650..848, Z 140..152 |
+| `PAD_top_side_L` | 12 mm plywood strip, part of the top frame around the hatch | 53 × 198 × 12 | X 12..65, Y 650..848, Z 848..860 |
+| `PAD_top_side_R` | same | | X 605..658, Y 650..848, Z 848..860 |
+| `PAD_top_rear` | 12 mm plywood strip | 540 × 26 × 12 | X 65..605, Y 822..848, Z 848..860 |
 | `PAD_hatch_opening` | open area bounded by the shell back wall and the three top strips | | X 65..605, Y 650..822 |
 | `PAD_hatch_lid` | 12 mm plywood lid, 10 mm foam gasket on underside; overlaps the shell roof by 10 mm at the front and the top strips at the sides and rear | 560 × 190 × 12 | X 55..615, Y 640..830, Z 860..872 |
 | `PAD_hatch_latch_L`, `_R` | toggle latches on `PAD_side_*` exterior, keepers on lid ends | | centres (12, 735, 850) and (658, 735, 850) |
@@ -155,21 +157,31 @@ Water path: sump → pump → hose → valve → quick coupler → distributor p
 
 Fan flow is upward through the roof holes into the hood and out sideways through the two end slots. The hood keeps rain and direct sun off the fans.
 
-### Group F: crate, shelf and rails (collection `F_storage`)
+### Group F: crate, scale, shelf and rails (collection `F_storage`)
+
+**Weighing platform (the sentinel crate).** The crate no longer rests on rails. It stands on a platform carried by one single-point load cell bolted to the floor hardpoint. Nothing else may touch the platform or the crate, or the scale will read wrong: keep every gap listed in section 6.
 
 | Name | Description | Size | Position |
 |------|-------------|------|----------|
-| `RAIL_L1_left` | aluminium angle 40 × 40 × 3, horizontal leg inward (+X), vertical leg down against the liner | 340 long | horizontal leg X 65..105, Y 155..495, Z 252..255; vertical leg X 65..68, Z 215..255 |
-| `RAIL_L1_right` | mirror | | horizontal leg X 565..605; vertical leg X 602..605 |
-| `RAIL_L2_left`, `RAIL_L2_right` | same, shelf level | | horizontal leg Z 532..535; vertical leg Z 495..535 |
-| `CRATE_1` | standard vented plastic crate, external 480 × 340 × 230, walls 4 mm, slotted sides, bottom grid; model with about 40 % open area. Holds 8-10 kg | | X 95..575, Y 155..495, Z 255..485 |
+| `SCALE_spacer_bottom` | aluminium spacer block under the fixed end of the load cell, bolted through the liner into `SHELL_hardpoint` with two M6 bolts | 60 × 40 × 10 | X 260..320, Y 305..345, Z 205..215 |
+| `SCALE_loadcell` | single-point aluminium load cell, 30 kg capacity, IP66 potted, accuracy class C3, rated for a 400 × 400 mm platform; four M6 holes on each end face. Long axis along X. Left end (fixed) bolted down, right end (live) bolted up | 150 × 40 × 40 | X 260..410, Y 305..345, Z 215..255 |
+| `SCALE_spacer_top` | aluminium spacer block on the live end, between the load cell and the platform | 60 × 40 × 10 | X 350..410, Y 305..345, Z 255..265 |
+| `SCALE_platform` | 4 mm aluminium plate | 496 × 350 × 4 | X 87..583, Y 150..500, Z 265..269 |
+| `SCALE_rib_front`, `SCALE_rib_back` | aluminium angle 20 × 20 × 2 riveted under the platform, stiffening it along X | 460 long | X 105..565; Y 170..190 and Y 460..480; Z 245..265 |
+| `SCALE_edge_left`, `SCALE_edge_right` | aluminium flat bar 20 × 3 riveted to the platform edge, standing 15 mm above the plate; keeps the crate from sliding sideways | 3 × 350 × 20 | X 84..87 and X 583..586; Y 150..500; Z 264..284 |
+| `SCALE_edge_back` | same, along the back edge | 502 × 3 × 20 | X 84..586, Y 500..503, Z 264..284 |
+| `SCALE_stop_1..4` | overload stops: HDPE block on the floor with an M8 nylon-tipped screw set 0.5 mm under the platform ribs; they catch the platform if the crate is dropped in, so the load cell is not bent | block 30 × 20 × 30, screw to Z 244.5 | block centres (130, 180), (540, 180), (130, 470), (540, 470); Z 205..235 block, 235..244.5 screw |
+| `SCALE_cable` | 4-core shielded load-cell cable, 1.2 m, leaving the load cell's fixed end with a slack loop, clipped to the floor liner and then up the right liner to `SHELL_gland_loadcell` | 5 dia | spline (260, 325, 235) → (240, 380, 210) → (598, 380, 210) → (598, 230, 400) → (605, 230, 590) |
+| `CRATE_1` | standard vented plastic crate, external 480 × 340 × 230, walls 4 mm, slotted sides, bottom grid; model with about 40 % open area. Holds 8-10 kg. Stands on `SCALE_platform` | | X 95..575, Y 155..495, Z 269..499 |
 | `CRATE_1_load` | optional produce (generic 60 mm spheres), fill to 170 mm depth | | inside the crate |
-| `SHELF_frame` | aluminium angle 20 × 20 × 2 rectangle resting on the level-2 rails | 480 × 340 × 20 | X 95..575, Y 155..495, Z 535..555 |
+| `RAIL_L2_left` | aluminium angle 40 × 40 × 3, horizontal leg inward (+X), vertical leg down against the liner; carries the shelf | 340 long | horizontal leg X 65..105, Y 155..495, Z 532..535; vertical leg X 65..68, Z 495..535 |
+| `RAIL_L2_right` | mirror | | horizontal leg X 565..605, Z 532..535; vertical leg X 602..605, Z 495..535 |
+| `SHELF_frame` | aluminium angle 20 × 20 × 2 rectangle resting on the rails | 480 × 340 × 20 | X 95..575, Y 155..495, Z 535..555 |
 | `SHELF_slats` | 11 polypropylene slats 30 wide × 10 thick × 340 long, running front to back (along Y), 15 mm gaps, riveted on top of the frame | | X 95..575 (first slat X 95..125, pitch 45), Y 155..495, Z 555..565 |
 | `SHELF_lip_front`, `SHELF_lip_back` | aluminium angle 20 × 20 × 2 along the front and back edges, stops loose produce rolling off | 480 long | Y 155..157 and Y 493..495, Z 565..585 |
-| `SHELF_load` | optional loose produce, one layer up to 150 mm (e.g. leafy bundles or fruit), 4-7 kg | | X 100..570, Y 160..490, Z 565..715 |
+| `SHELF_load` | optional loose produce, one layer up to 150 mm (e.g. leafy bundles or fruit), 4-7 kg. Not weighed by the scale | | X 100..570, Y 160..490, Z 565..715 |
 
-Clearances: 50 mm between the crate top and the shelf rail, 80 mm between the top of the shelf load and the roof liner, 90 mm plenum in front (Y 65..155) and 90 mm behind (Y 495..585). The crate may be 480-500 mm wide; rails bear 10-20 mm each side. The pad opening (Z 360..660) spans the upper half of the crate and the shelf zone.
+Clearances: 33 mm between the crate top (Z 499) and the shelf rails (Z 532), 80 mm between the top of the shelf load and the roof liner, 90 mm plenum in front of the crate (Y 65..155) and 85 mm behind the platform (Y 500..585). The pad opening (Z 360..660) spans the upper half of the crate and the shelf zone. The old lower crate rails are removed: the crate slides in over the open front edge of the platform.
 
 ### Group G: electrical bay (collection `G_bay`)
 
@@ -178,10 +190,10 @@ Plywood box (9 mm) screwed to the right wall exterior. Display and buttons on th
 | Name | Description | Size | Position |
 |------|-------------|------|----------|
 | `BAY_back` | 9 mm ply, against the shell right wall | 9 × 250 × 350 | X 670..679, Y 0..250, Z 510..860 |
-| `BAY_front` | 9 mm ply with display, switch and button cut-outs | 141 × 9 × 350 | X 679..820, Y 0..9, Z 510..860 |
-| `BAY_rear` | 9 mm ply, with two cable glands | 141 × 9 × 350 | X 679..820, Y 241..250, Z 510..860 |
-| `BAY_bottom` | 9 mm ply with 4 vent slots 60 × 8 and screen | 141 × 232 × 9 | X 679..820, Y 9..241, Z 510..519 |
-| `BAY_top` | 9 mm ply with 4 vent slots 60 × 8 and screen, and cable entry holes | 141 × 232 × 9 | X 679..820, Y 9..241, Z 851..860 |
+| `BAY_front` | 9 mm ply with display, switch and button cut-outs | 132 × 9 × 350 | X 679..811, Y 0..9, Z 510..860 |
+| `BAY_rear` | 9 mm ply | 132 × 9 × 350 | X 679..811, Y 241..250, Z 510..860 |
+| `BAY_bottom` | 9 mm ply with 4 vent slots 60 × 8 and screen | 132 × 232 × 9 | X 679..811, Y 9..241, Z 510..519 |
+| `BAY_top` | 9 mm ply with 4 vent slots 60 × 8 and screen, and cable entry holes | 132 × 232 × 9 | X 679..811, Y 9..241, Z 851..860 |
 | `BAY_lid` | 9 mm ply, hinged along its rear vertical edge, magnetic catch at front | 9 × 250 × 350 | X 811..820, Y 0..250, Z 510..860 (closed) |
 | `BAY_display` | 2.8 in TFT (320 × 240), active area 58 × 43, bezel 70 × 50 | | centre (745, 0, 800), flush in `BAY_front` |
 | `BAY_led_status` | 5 mm bicolour LED | | centre (800, 0, 800) |
@@ -191,18 +203,19 @@ Plywood box (9 mm) screwed to the right wall exterior. Display and buttons on th
 | `BAY_jack_dc` | 5.5 × 2.1 mm panel-mount DC barrel jack | | centre (700, 0, 630) |
 | `BAY_fuse` | panel-mount 5 × 20 fuse holder, 3 A | | centre (790, 0, 630) |
 | `BAY_pcb_plate` | 3 mm acrylic plate on 10 mm standoffs against `BAY_back`, plate plane vertical | 120 × 200 × 3 | X 689..692, Y 25..225, Z 700..820 |
-| `BAY_esp32` | ESP32 DevKitC, 55 × 28 × 12 | | on plate, centre (Y 70, Z 790) |
+| `BAY_esp32` | ESP32-S3-DevKitC-1 (replaces the classic ESP32 because the scale needs two more pins), 69 × 26 × 12 | | on plate, centre (Y 70, Z 790), long side along Y |
 | `BAY_buck_5v` | 12 V to 5 V buck module 43 × 21 × 14 | | on plate, centre (Y 70, Z 730) |
 | `BAY_mosfet_pump` | MOSFET module 33 × 24 × 12 | | on plate, centre (Y 140, Z 790) |
 | `BAY_mosfet_fans` | same (fan enable); PWM goes direct from the ESP32 | | on plate, centre (Y 140, Z 750) |
 | `BAY_sd_module` | microSD module 40 × 24 × 10 | | on plate, centre (Y 200, Z 790) |
 | `BAY_terminal_block` | 12-way barrier terminal 12 × 80 × 15 | | on plate, centre (Y 140, Z 715) |
+| `BAY_hx711` | HX711 load-cell amplifier board 34 × 21 × 4, in a small shielded tin 40 × 28 × 10, as close to the load-cell gland as possible | | on plate, centre (Y 200, Z 740) |
 | `BAY_battery` | 12 V 12 Ah sealed lead-acid battery, 151 × 98 × 95, held by a strap to `BAY_bottom` | | X 700..798, Y 40..191, Z 519..614 |
 | `BAY_dcups_module` | 12 V DC-UPS / battery charge module, about 110 × 60 × 25, on standoffs on the inside of `BAY_lid` | | X 786..811, Y 70..180, Z 625..685 |
 | `BAY_fuse_battery` | inline 5 A blade fuse holder on the battery positive lead | 40 × 15 × 12 | X 720..760, Y 195..210, Z 620..632 |
 | `BAY_gland_top_1` | cable entry from `FAN_conduit` | | in `BAY_top` at (700, 200) |
 | `BAY_gland_top_2` | cable entry from `BAY_conduit_side` (pump, float switch, ambient sensor) | | in `BAY_top` at (700, 120) |
-| `BAY_back_hole_1`, `_2` | 20 mm holes in `BAY_back` aligned with the two chamber glands, so sensor cables pass straight from the chamber into the bay | | (Y 120, Z 530) and (Y 200, Z 560) |
+| `BAY_back_hole_1`, `_2`, `_3` | 20 mm holes in `BAY_back` aligned with the three chamber glands, so sensor and load-cell cables pass straight from the chamber into the bay | | (Y 120, Z 530), (Y 200, Z 560) and (Y 230, Z 590) |
 | `BAY_conduit_side` | 16 mm PVC conduit on the right wall exterior from the bay top to the rear module gland | | spline: (700, 120, 865) → (700, 250, 865) → (680, 640, 780) → (680, 830, 780) |
 
 Power: a 15 V wall adapter plugs into `BAY_jack_dc`; the DC-UPS module runs the cooler from it and keeps `BAY_battery` charged, switching to the battery during brownouts. See `05-systems-and-protocol.md` section 4.2.
@@ -213,7 +226,7 @@ Power: a 15 V wall adapter plugs into `BAY_jack_dc`; the DC-UPS module runs the 
 |------|-------------|----------|
 | `SENS_chamber` | SHT31 in slotted housing 40 × 25 × 15, on the right liner in the front plenum, level with the gap between the crate top and the shelf. This is the air leaving the produce, the honest chamber reading | X 590..605, Y 100..140, Z 518..543 |
 | `SENS_pad_outlet` | SHT31 in slotted housing, on the back liner just above the pad opening; measures pad-outlet air for the efficiency reading | X 315..355, Y 570..585, Z 665..690 |
-| `SENS_pulp_probe` | DS18B20 stainless probe 6 dia × 50, on a 1.5 m cable from `SHELL_gland_pulp_probe`, pushed into a fruit in `CRATE_1` | probe centre (335, 325, 400) |
+| `SENS_pulp_probe` | DS18B20 stainless probe 6 dia × 50, on a 1.5 m cable from `SHELL_gland_pulp_probe`, pushed into a fruit in `CRATE_1`. The cable is clipped to the right liner and hangs in a slack loop into the crate so it does not pull on the weighed crate | probe centre (335, 325, 414) |
 | `SENS_cable_chamber` | short cable from `SENS_chamber` to `SHELL_gland_chamber_sensor` | (605, 120, 530) |
 
 ### Group I: labels and finish (collection `I_labels`)
@@ -238,8 +251,10 @@ Z
  795 │ chamber ceiling   FAN↑       │  cap + distributor Z 665..710
      │  shelf load 565..715         │ ┌────────────────┐ gap │← inlet air
      │ ═shelf 535..565═   opening   ║ │ cellulose 7090 │ 30  │  louver Y 860..880
-     │ ┌crate 255..485┐   360..660  ║ │ 150 deep       │     │
- 350 │ └──────────────┘             │ └────────────────┘     │
+     │ ┌crate 269..499┐   360..660  ║ │ 150 deep       │     │
+ 350 │ │              │             │ └────────────────┘     │
+ 265 │ ╞platform══════╡             │                        │
+ 215 │   [load cell]                │                        │
  312 │                              │ ┌──sump 152..312──────┐│
  205 ┼──floor(65)───────────────────┤ │ water 105 mm, 10 L  ││
  140 ┼ base frame 100..140 ─────────┴─┴─────────────────────┴┤
@@ -247,7 +262,7 @@ Z
      Y=0 door        Y=585 liner  Y=650  657  817   848 860
 ```
 
-Plan at Z = 400 (looking down):
+Plan at Z = 400 (looking down; the load cell under the platform is shown for reference):
 
 ```
 Y
@@ -258,8 +273,11 @@ Y
 657 │  └──────────────────────────────────────┘ guides │
 650 ├──back wall (65) with opening X 85..585──────────┤
 585 │  chamber                                        │
-495 │   ┌──────── crate X 95..575 ────────┐           │   ┌ bay X 670..820 (Z 510..860)
-155 │   └──────────────────────────────────┘          │   └ Y 0..250
+500 │  ┌─────── platform X 87..583 ─────────┐         │   ┌ bay X 670..820 (Z 510..860)
+495 │  │┌──────── crate X 95..575 ────────┐ │         │   │
+325 │  ││   load cell X 260..410 (below)   │ │         │   │
+155 │  │└──────────────────────────────────┘ │         │   └ Y 0..250
+150 │  └────────────────────────────────────┘         │
  65 │  front plenum                                   │
   0 ├──────────── door (X 25..645 face) ──────────────┤
     X=0                                            X=670
@@ -278,13 +296,16 @@ EvapCooler
 │   ├── D3_water      (sump, water body, pump, float, hose, valve, fill, overflow, sight tube)
 │   └── D4_inlet      (screen, louver, ambient sensor)
 ├── E_fans
-├── F_storage         (rails, crate, shelf, optional loads)
+├── F_storage
+│   ├── F1_scale      (hardpoint is in B_shell; spacers, load cell, platform, ribs, edges, stops, cable)
+│   ├── F2_crate      (crate, optional load)  ← sits on the platform
+│   └── F3_shelf      (rails, frame, slats, lips, optional load)
 ├── G_bay
 ├── H_sensors
 └── I_labels
 ```
 
-Suggested animations or exploded views: door swing (C_door), cassette lift (D2_cassette, +540 mm in Z to clear the hatch, after unplugging the quick coupler), crate and shelf pull-out (-300 mm in Y), bay lid swing (BAY_lid, hinge along its rear vertical edge at X 820, Y 250).
+Suggested animations or exploded views: door swing (C_door), cassette lift (D2_cassette, +540 mm in Z to clear the hatch, after unplugging the quick coupler), crate pull-out (lift +15 mm to clear the platform edges, then -300 mm in Y), shelf pull-out (-300 mm in Y), bay lid swing (BAY_lid, hinge along its rear vertical edge at X 820, Y 250).
 
 ## 6. Interference and clearance checks
 
@@ -300,5 +321,9 @@ Suggested animations or exploded views: door swing (C_door), cassette lift (D2_c
 * `BAY_battery` (Z 519..614) sits below `BAY_pcb_plate` (Z 700..820). `BAY_dcups_module` on the lid (X 786..811, Z 625..685) sits above the battery's top (Z 614), so the lid closes without touching it. `BAY_fuse_battery` (Z 620..632) sits beside the battery top at Y 195..210, behind the battery (Y 40..191).
 * `HOOD` (X 110..560, Y 120..290) does not overlap the hatch lid (Y 640..830) or the bay (X 670+).
 * Front-panel parts on `BAY_front` sit in rows at Z 800, 740, 690 and 630, at least 50 mm apart vertically and 30 mm apart horizontally.
+* **Scale isolation (critical).** Nothing may touch the platform or the crate except the load cell. Gaps: platform edge strips (X 84..586) to the side liners (X 65 and 605) 19 mm; back edge strip (Y 503) to the back liner (Y 585) 82 mm; crate top (Z 499) to the shelf rails (Z 532) 33 mm; platform ribs (Z 245) to the overload-stop screws (Z 244.5) 0.5 mm; platform underside (Z 265) to the chamber sensor and cables: no contact. The pulp-probe and load-cell cables hang in slack loops.
+* `SCALE_loadcell` (X 260..410, Y 305..345) sits on its bottom spacer at the fixed end only (X 260..320); the live end (X 350..410) is free underneath, with 10 mm clearance to the liner, so it can deflect.
+* `SCALE_stop_1..4` sit under the ribs (Y 170..190 and 460..480) and clear the load cell (Y 305..345).
+* `SHELL_hardpoint` (X 240..430, Y 290..360) spans the bottom spacer and stays clear of the floor drain (centre Y 560).
 * Caster swing radius 60 mm at each corner: no part below Z 100 within that radius.
 * Rear louver needs 300 mm free space behind the unit for inlet air; the label says so.

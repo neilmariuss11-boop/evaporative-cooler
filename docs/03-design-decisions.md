@@ -2,7 +2,7 @@
 
 Decision log for the student-scale evaporative cooling cabinet. Each entry states the decision, why it was taken (research result, efficiency, practicality or patent avoidance), and what it rules out. Read this before `04-assembly-spec.md`; that file only gives geometry.
 
-Status: decided with the project owner on 30 Sep 2026, revised twice the same day (cellulose pad; then half capacity). One item remains open (section 4).
+Status: concept **Option B - Scale** (branch `option-b-scale`). Decided with the project owner on 30 Sep 2026 and revised the same day: cellulose pad, half capacity, adapter with backup battery, sentinel-crate scale. One item remains open (section 4).
 
 ## 1. Project priority
 
@@ -26,6 +26,7 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 | D10 | Efficiency definition | Get as close to the wet-bulb limit as possible, single stage | A two-stage unit would add 1.5-2 K on dry afternoons but doubles parts and cost and sits near the dew-point cooler patents. Not worth it for a practical unit. |
 | D11 | Testing scope | Test only the final design: commissioning, no-load performance in both seasons, storage trial | No pad-material comparison. |
 | D12 | Electronics fallback | Keep the controller, add a 3-position AUTO / OFF / MANUAL switch | If the electronics fail, MANUAL runs the fans at full speed and the pump continuously, so the cooler keeps working. Essential for a unit meant for real use. |
+| D14 | Novelty | **Sentinel crate**: the crate stands on a built-in scale (30 kg load cell) so the cooler measures its own produce's weight loss, shows days left and kilograms or pesos saved versus shelf storage, and adjusts its effort to a weight-loss budget | The strongest open novelty found in the screening search (`06-software-novelty-options.md`), mostly software, and useful to a vendor. Presented as "measures and reports its own produce's weight loss", with the budget control as the secondary benefit. |
 | D13 | Power | 15 V wall adapter plus a 12 V 12 Ah sealed lead-acid battery through a DC-UPS charge module | Mains runs the cooler and charges the battery; brownouts switch to the battery without interruption, for about 8-12 h of cooling or 20 h in humid weather. No solar. |
 
 ## 3. Decisions taken by the designer (owner may override)
@@ -47,6 +48,9 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 | E13 | White exterior | White paint, varnished edges | Cuts solar heat gain when the unit is used outdoors. |
 | E14 | Three sensors | Ambient in the inlet air, pad outlet at the pad opening, chamber at mid-height between crate levels 1 and 2 | Pad efficiency needs inlet and pad-outlet readings. Chamber efficiency needs a reading in the produce zone, so the reported temperature drop is honest. |
 | E15 | No sterilisation, UV, ozone or cloud connection | Local logging only | Keeps the unit simple and clear of the Sabjikothi application. Wi-Fi can be added later without geometry changes. |
+| E16 | Controller board | ESP32-S3-DevKitC-1 instead of the classic ESP32 | The classic board had no free pins left for the scale's amplifier; the S3 has enough and costs about PHP 100 more. |
+| E17 | Scale hardware | One 30 kg IP66 single-point load cell under a stiffened 4 mm aluminium platform, bolted to an HDPE hardpoint in the floor, with four overload stops | One sealed cell is simpler and steadier than four cheap corner cells in 90-95 % humidity. The platform's front edge is open so the crate slides on and off. |
+| E18 | Rates from long windows | Weight-loss rate from 12-24 h least-squares fits, never from minute-to-minute readings | The produce loses only 10-30 g a day; a load cell drifts a few grams a day, so short windows would be noise. |
 
 ## 4. Open decisions (owner to confirm)
 
@@ -56,9 +60,11 @@ The physical limit is the outside wet-bulb temperature. In lowland Philippines i
 
 ## 5. Positioning: what the unit is, and what it is not
 
-**Not a new invention as built.** A software-based novelty is under consideration; see `06-software-novelty-options.md`. An earlier draft of this log claimed that switching modes on measured wet-bulb depression was new. A later search found close prior art: microcontroller-controlled produce coolers published since at least 2017, a 2026 systematic review of intelligent evaporative cooling for postharvest storage, and US patents on evaporative cooler control. That claim is withdrawn.
+**The novelty is the sentinel crate (D14), not the cooling hardware.** The cooling hardware is not new. An earlier draft of this log claimed that switching modes on measured wet-bulb depression was new. A later search found close prior art: microcontroller-controlled produce coolers published since at least 2017, a 2026 systematic review of intelligent evaporative cooling for postharvest storage, and US patents on evaporative cooler control. That claim is withdrawn.
 
-**What the group can honestly claim:**
+**Novelty claim (draft, to be confirmed by the searches listed in `06-software-novelty-options.md`):** a small evaporative produce cooler that weighs its own produce, learns how fast that batch is drying, tells the operator the weight lost, the days left before the produce becomes unsellable and the weight saved versus open-shelf storage, and adjusts its fans and wetting to keep the loss within a budget.
+
+**What the group can also claim:**
 * **Performance near the physical limit.** A target pad saturation efficiency of 85-95 %, against 50-70 % for the natural-fibre pads used in most published student and extension coolers, including coir and jute.
 * **A practical unit.** Commodity parts, a pad that lasts years, a 12 V supply, a manual fallback, two-day water autonomy in the dry season, and one-person handling on casters.
 * **Proof, not claims.** Continuous logging of ambient, pad-outlet and chamber conditions, water and energy, over both seasons, plus a storage trial against ambient.
