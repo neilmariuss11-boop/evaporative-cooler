@@ -57,7 +57,7 @@ The literature on what drives quality loss makes humidity as important as temper
 
 **Decision:** active, single-stage direct cooler. It gives the highest efficiency that can be built, measured and controlled at student scale, which matched the owner's priority of application over novelty. The two-stage option was rejected because its gain is small in humid weather, it costs a second fan and a heat exchanger, and it sits next to the dew-point patents.
 
-**Economics:** a single-stage active cabinet costs about PHP 23,400 complete, including the battery and the scale (section 10). A two-stage unit would add a second fan, a fabricated plate heat exchanger and extra ducting, which is roughly PHP 2,000-4,000 more by this project's estimate, for a gain of about 1 K in the wet season.
+**Economics:** a single-stage active cabinet costs about PHP 24,500 complete, including the battery and the scale (section 10). A two-stage unit would add a second fan, a fabricated plate heat exchanger and extra ducting, which is roughly PHP 2,000-4,000 more by this project's estimate, for a gain of about 1 K in the wet season.
 
 ## 4. Pad media: why cellulose honeycomb instead of coconut coir or other local fibres
 
@@ -127,6 +127,7 @@ Scores from 1 (worst) to 5 (best), weighted by the project's priorities: efficie
 ## 5. Pad geometry, airflow and water distribution
 
 * **Depth and face velocity.** Saturation efficiency rises with pad depth and falls with air speed (Munters product data [verify]; review of optimal pad operation, Renewable and Sustainable Energy Reviews, 2021 [verify]). Decision: 150 mm depth, 500 × 300 mm face, 100 m³/h, giving 0.19 m/s and under 5 Pa pressure drop. This lets two small 12 V fans do the job.
+* **Water treatment.** Cellulose pad makers warn against bleach and bromine because they shorten pad life, and recommend drying the pad completely once a day, periodic cleaning, a small bleed-off of water and a pH of 6-8 (Munters engineering bulletin on algae prevention [verify]; University of Illinois Extension, 2019 [verify]). Chlorinated water also pits bare aluminium. Decision: no chlorine; algae controlled by a dark sump, a sensor-ended daily dry-out and weekly draining; anodised aluminium and PVC in the wet zone.
 * **Wetting rate.** Cellulose pad studies show efficiency rises with water flow up to a point, then falls when excess water films the pad face (Franco et al., 2010 [verify]). Decision: a trim valve set at commissioning until the whole face is wet with no streaming. A distribution cap spreads water across the full 150 mm depth, the method used in commercial pad systems.
 * **Intermittent wetting.** Pulsing the pump can lower outlet temperature and save energy compared with continuous wetting (Int. Comm. Heat Mass Transfer, 2021 [verify]). A regenerative cooler study cut pump power by 32.3 % with a 2 minutes on, 60 minutes off cycle (Int. J. Refrigeration, 2025 [verify]). Decision: pulsed wetting, 2 minutes on and 3 minutes off by default, tuned at commissioning.
 * **Pull-through, once-through air.** Fans exhaust from the chamber so the pad is the only air inlet, and no chamber air is recirculated to the pad. Recirculation would raise pad-inlet humidity, and one form of it is patented (US 2014/0174116).
@@ -177,14 +178,14 @@ Cost by subsystem, from the bill of materials:
 
 | Subsystem | Approx. PHP | Share |
 |-----------|------------:|------:|
-| Cabinet, insulation, door, base and casters | 6,250 | 27 % |
-| Pad, cassette, water system | 5,900 | 25 % |
+| Cabinet, insulation, door, base and casters | 6,250 | 26 % |
+| Pad, cassette, water system and pad care | 6,200 | 25 % |
 | Fans, hood, louver, screens | 1,100 | 5 % |
-| Controller, sensors, display, wiring | 3,170 | 14 % |
+| Controller, sensors, display, wiring, coating | 3,920 | 16 % |
 | Power: adapter, battery, charge module | 2,400 | 10 % |
 | Sentinel-crate scale | 2,600 | 11 % |
-| Crates, shelf, finishing | 2,000 | 9 % |
-| **Total** | **about 23,400** | 100 % (shares rounded) |
+| Crates, shelf, finishing | 2,000 | 8 % |
+| **Total** | **about 24,500** | 100 % (shares rounded) |
 
 An illustrative payback, with every input an assumption to be replaced by trial data:
 * 15 kg per batch, 5-day batches, about 70 batches a year;
@@ -221,6 +222,8 @@ Citations marked [verify] are incomplete or were not read in full.
 * MIT D-Lab. (2018). Evaluation of low-cost evaporative cooling devices in Mali. MIT News, 20 June 2018.
 * MIT News. (2023). Addressing food insecurity in arid regions with an open-source evaporative cooling chamber design. 19 July 2023.
 * Munters. CELdek 7090-15 evaporative cooling pad, product sheet. [verify efficiency values]
+* Munters. Algae prevention, Engineering Bulletin MB-ACP-205. [verify]
+* University of Illinois Extension. (2019). Evaporative cooling pads: maintenance for longer life. [verify]
 * Ndukwu, M. C., & Manuwa, S. I. (2014). Review of research and application of evaporative cooling in preservation of fresh agricultural produce. *International Journal of Agricultural and Biological Engineering*, 7(5), 85-102. [verify]
 * PAGASA. Climatological normals 1991-2020 and Climate of the Philippines.
 * Performance analysis of a new sustainable evaporative cooling pad made from coconut coir. (2008). *International Journal of Sustainable Engineering*. [verify authors]

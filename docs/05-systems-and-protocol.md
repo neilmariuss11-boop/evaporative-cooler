@@ -34,13 +34,20 @@ The fans are 4-pin PWM types. The ESP32 sets speed through the PWM line and a MO
 | Flow setting | Trim valve so the whole pad face darkens evenly within 3 minutes with no dry streaks, then open 20 % more. Water must not stream off the chamber-side face | |
 | Pump duty, DRY mode | 2 min on / 3 min off (40 %) default | Cellulose holds enough water to stay wet between pulses. Tune at commissioning (section 6.1) |
 | Pump duty, HUMID mode | 1 min on / 9 min off | |
-| Daily dry-out | pump off, fans at 50 % for 45 min once a day (default 06:00) | Standard practice for cellulose pads to control algae; chosen at the time of lowest cooling need |
+| Daily dry-out | pump off, fans at 50 % once a day from 06:00 until the pad is dry: ends when the pad-outlet humidity falls to within 3 % RH of ambient, or after 3 h at most | Pad makers advise letting cellulose pads dry completely once every 24 h to stop algae; the sensor ending makes sure the pad really dries instead of running a fixed time |
 | Evaporation at peak afternoon rate | 6-8 L/day in the dry season, 1.5-3.5 L/day in the wet season (calc, 100 m³/h) | Actual daily use is lower because night-time evaporation is small: expect about 4-5.5 L/day in the dry season |
 | Sump working volume | 10 L at 105 mm; overflow invert at 115 mm (11 L) | Refill every 2 days in the dry season, every 3-4 days in the wet season |
 | Low-level cut-out | float switch at 40 mm (about 3.8 L left) | Protects the pump; display shows "FILL" |
 | Fill | 32 mm capped port on the rear panel; sight tube with a 0-11 L scale | |
 
-**Water quality and hygiene.** Use tap water or rainwater; hard well water leaves scale on cellulose pads and cuts efficiency. Drain and scrub the sump weekly. Add 1-2 mL of household bleach (5 % sodium hypochlorite) per 10 L at each fill to slow algae. Hose the pad from the chamber side toward the inlet side once a month. A cellulose pad kept this way lasts several years. Replace it when measured saturation efficiency drops more than 10 points below the commissioning value. Produce never touches the water, but the chamber air does, so keep the water clean.
+**Water quality and hygiene.** No bleach or other chlorine: pad manufacturers warn that chlorine and bromine shorten cellulose pad life, and chlorinated water pits aluminium.
+* Use tap water or rainwater. Hard well water leaves scale on the pad and cuts efficiency.
+* Algae need light, water and nutrients. The sump is opaque PVC under the cassette, so it stays dark, and the daily dry-out takes away the water.
+* Drain the sump completely and scrub it once a week, then refill with fresh water. This also does the job of the 3-5 % bleed-off that pad makers recommend for flushing out dissolved minerals; drain twice a week if the water is hard.
+* Keep the water pH between 6 and 8; check with test strips at each weekly drain.
+* Once a month, hose the pad gently from the chamber side toward the inlet side. If scale or algae build up, clean it with a pad cleaner made for cellulose pads (a detergent with a mild organic acid) or a quaternary-ammonium algaecide used occasionally, never continuously, following the product label.
+* A pad kept this way lasts several years. Replace it when measured saturation efficiency drops more than 10 points below the commissioning value.
+* Produce never touches the water, but the chamber air does, so keep the water clean.
 
 ## 3. Heat load and expected performance
 
@@ -165,7 +172,7 @@ All cables outside the bay run in 16 mm PVC conduit. Entries into the chamber an
 | DRY | WBD ≥ 3.0 K | 65 % (set at commissioning to give 100 m³/h) | 2 min on / 3 min off | Maximum cooling |
 | HUMID | WBD < 2.5 K (0.5 K hysteresis) | 30 % | 1 min on / 9 min off | Hold 90-95 % RH with little water and energy |
 | SATURATED | RH_ch ≥ 97 % and T_ch ≥ T_amb - 0.5 K for 10 min | 25 % | off | Air exchange only; wetting gains nothing |
-| DRY-OUT | once a day at the set time, 45 min | 50 % | off | Algae control for the cellulose pad |
+| DRY-OUT | once a day at the set time, until the pad-outlet RH is within 3 % of ambient, 3 h at most | 50 % | off | Algae control for the cellulose pad |
 | FILL | water_ok = false | unchanged | off | Protect the pump; display and LED alarm |
 | PULLDOWN | T_pulp > T_ch + 3 K, for example after loading | 100 % | as DRY | Fast removal of field heat |
 
@@ -324,14 +331,14 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 8 | 120 mm 12 V 4-pin PWM fans | 0.25-0.35 A | 2 | 600 |
 | 9 | Fan guards 120 mm |  | 2 | 100 |
 | 10 | Cellulose evaporative pad 7090, 150 mm | one standard sheet, cut to 500 × 300 | 1 | 2,500 |
-| 11 | Aluminium sheet 1 mm (distribution cap) | 0.3 × 0.6 m | 1 | 300 |
+| 11 | Grey PVC sheet 2 mm (distribution cap, heat-bent) | 0.3 × 0.6 m | 1 | 200 |
 | 12 | 12 V brushless DC submersible pump | 300-500 L/h at 1 m, 8-12 W | 1 | 900 |
 | 13 | Float switch, vertical |  | 1 | 120 |
 | 14 | PVC pipe 1/2 in, elbow, cap, 32 mm port and cap, 20 mm overflow, barbs |  | lot | 350 |
 | 15 | Vinyl hose 12 mm ID, 1/2 in ball valve, 1/2 in hose quick coupler | 1.5 m | 1 | 450 |
 | 16 | Aluminium angle 40 × 40 × 3 (shelf rails) | 0.8 m | 1 | 200 |
-| 17 | Aluminium angle 20 × 20 × 2 (cassette frame, shelf frame and lips) | 7 m | 1 | 650 |
-| 18 | Aluminium angle 25 × 25 × 3 (cassette stops) | 0.4 m | 1 | 80 |
+| 17 | Anodised aluminium angle 20 × 20 × 2 (cassette frame, shelf frame and lips) | 7 m | 1 | 750 |
+| 18 | Anodised aluminium angle 25 × 25 × 3 (cassette stops) | 0.4 m | 1 | 80 |
 | 19 | PVC U-channel (cassette guides) | 0.9 m | 1 | 150 |
 | 20 | Polypropylene sheet 10 mm (shelf slats) | 0.35 × 0.4 m | 1 | 350 |
 | 21 | Aluminium insect screen | 1 m² | 1 | 150 |
@@ -341,7 +348,7 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 25 | EPDM D-gasket 10 mm, foam tape | 4 m |  | 200 |
 | 26 | Stainless hinges 75 mm, draw latches, D-handle, toggle latches, rivets |  | lot | 650 |
 | 27 | ESP32-S3-DevKitC-1 |  | 1 | 450 |
-| 28 | SHT31 sensor modules | ambient, chamber, pad outlet | 3 | 900 |
+| 28 | SHT31 sensors in sealed probe housings with PTFE membrane filter | ambient, chamber, pad outlet | 3 | 1,350 |
 | 29 | DS18B20 waterproof probe |  | 1 | 120 |
 | 30 | 2.8 in SPI TFT 320 × 240 |  | 1 | 450 |
 | 31 | microSD module + 8 GB card |  | 1 | 250 |
@@ -359,7 +366,9 @@ The test crop is open decision O2. The default is tomato at breaker stage, with 
 | 43 | Aluminium flat bar 20 × 3 and angle 20 × 20 × 2 (platform edges and ribs) | 2.2 m | 1 | 250 |
 | 44 | HDPE block (floor hardpoint and overload stops), aluminium spacers, M6 and M8 bolts, nylon-tipped screws | | lot | 400 |
 | 45 | Shielded 4-core cable, extra M16 gland | 1.5 m | 1 | 100 |
-| | **Total** | | | **~23 400** |
+| 46 | Cellulose-pad cleaner or quaternary-ammonium algaecide, pH test strips | | 1 | 300 |
+| 47 | Acrylic conformal coating spray for circuit boards | | 1 | 300 |
+| | **Total** | | | **~24 500** |
 
 The sentinel-crate scale adds about PHP 2,600, more than the PHP 600-900 first estimated. The difference is the sealed IP66 load cell, which the constant 90-95 % humidity needs, and the stiff platform. A cheaper unsealed load cell (about PHP 300) with a silicone boot would cut the scale cost to about PHP 1,700 but will likely drift more.
 
@@ -370,7 +379,7 @@ Prices are 2026 Metro Manila hardware, poultry-supply and electronics-shop estim
 * 12 V system fused at 3 A on the bus and 5 A on the battery lead; no mains inside the unit. The adapter stays outside.
 * The sealed lead-acid battery is maintenance-free and safe indoors, but keep the bay vents clear and replace the battery every 3-4 years or when runtime halves.
 * Water and electronics are separated: the bay is on the dry right side, the wet module is at the back, and the only shared items are glanded cables.
-* The sump water is dosed with bleach and is not potable; the fill label says so.
+* The sump water is recirculated and not potable; the fill label says so. No bleach or chlorine products go in it.
 * Fans are guarded and the hood slots are screened.
 * Casters lock during trials so the door can be opened without the unit rolling.
 * Lift the unit only by the base frame; the door and the bay are not handles.

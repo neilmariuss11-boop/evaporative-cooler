@@ -74,7 +74,7 @@ Why this family and not the alternatives:
 | Power | 15 V wall adapter plus 12 V 12 Ah backup battery; about 200 Wh/day in the dry season, 8-12 h on battery |
 | Overall size | 820 × 892 × 920 mm on casters |
 | Novelty feature | Sentinel crate: built-in scale under the crate tracks the produce's own weight loss |
-| Cost | about PHP 23 400 including the backup battery and the scale |
+| Cost | about PHP 24 500 including the backup battery and the scale |
 
 ### 2.2 How to present it
 
