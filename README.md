@@ -16,6 +16,7 @@ Agricultural and Biosystems Engineering project: a small evaporative cooling cab
 | `docs/06-software-novelty-options.md` | Software-based novelty options with prior-art screening; the sentinel crate (Option 1) was chosen. |
 | `docs/08-literature-synthesis.md` | Synthesis of related literature behind each design decision, with pad-media decision matrix, economics and reference list for the RRL. |
 | `docs/09-materials-and-components.md` | Every part with its material or spec, why it was chosen, rejected alternatives, quantity and cost; material rules for the humid, wet environment. |
+| `docs/10-novelty-and-inventive-step.md` | Novelty, inventive step and industrial applicability of the sentinel-crate feature against the closest prior art, with draft claims. |
 | `docs/07-blender-handoff.md` | Brief for the 3D modeller: what to build, in what order, how, and what to deliver back. |
 | `tools/psychro_design.py` | Psychrometric and sizing calculator (wet-bulb, wet-bulb depression, pad outlet state, chamber temperature, water use, pad area). Standard library only. |
 

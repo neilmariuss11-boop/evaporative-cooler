@@ -15,7 +15,7 @@ Goal set by the owner: a device-level novelty that is mostly software, so it add
 | Shelf-life digital twin of the fruit | Empa (Defraeye group): physics-based twins delivered through a smartphone app for smallholders |
 | IoT shelf-life monitoring of stored tomato | 2026 dew-computing tomato storage framework; several Arduino/ESP32 monitoring systems |
 | Gas or multispectral freshness sensing | ML gas-sensor shelf-life estimators; multispectral ripening framework |
-| Load-cell feedback to control product weight loss | US 10,226,054 does this for **meat carcass spray chilling**, not produce or evaporative coolers. It is an analogue, not a direct hit |
+| Load-cell feedback to control product weight loss | US 9,339,042 and US 10,226,054 (carcass weight control) weigh selected carcasses and spray water until each returns to its starting weight. This is the **closest prior art**: the general idea of weighing a sample and adding moisture is taken. The sentinel crate differs in product, cooling principle, control target and learning; see `10-novelty-and-inventive-step.md` |
 
 ## 2. What looks open
 
